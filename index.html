@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al Noor Boys Hostel &amp; Mess Management</title>
+    <title>Al Noor Boys Hostel & Mess Management</title>
     <style>
         :root {
             --primary: #1e3c72;
@@ -17,256 +17,407 @@
             --warning: #c0392b;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
-        body { background-color: var(--bg); color: var(--text); }
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-        /* Header */
-        .dashboard-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #ffffff; padding: 25px 0; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .dashboard-header h1 { font-size: 28px; margin-bottom: 8px; font-weight: 600; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 50px;
+        }
 
-        /* Container & Navigation */
-        .container { max-width: 1200px; margin: 25px auto; padding: 0 20px; }
-        .nav-menu { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .nav-btn { background: var(--secondary); color: #ffffff; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
-        .nav-btn:hover, .nav-btn.active { background: var(--accent); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+        /* Top Header & Navigation */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-        /* Sections & Display */
-        .section { display: none; background: var(--card-bg); border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); padding: 30px; margin-bottom: 30px; }
-        .section.active { display: block; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-        .sub-nav { display: flex; justify-content: start; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .sub-btn { background: none; border: none; color: var(--text-light); padding: 8px 15px; cursor: pointer; font-size: 16px; font-weight: 500; transition: color 0.3s; }
-        .sub-btn:hover, .sub-btn.active { color: var(--secondary); border-bottom: 2px solid var(--secondary); }
-        .sub-section { display: none; }
-        .sub-section.active { display: block; }
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
 
-        /* Premium Dashboard Cards */
-        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 30px; }
-        .card { background: linear-gradient(to right, #ece9e6, #ffffff); padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); transition: transform 0.3s; }
-        .card:hover { transform: translateY(-5px); }
-        .card h3 { font-size: 16px; color: var(--text-light); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
-        .card .value { font-size: 28px; font-weight: bold; color: var(--primary); }
+        .logo-area h1 {
+            font-size: 18px;
+            font-weight: bold;
+        }
 
-        /* Tables & Typography */
-        h2 { color: var(--primary); margin-bottom: 20px; font-size: 24px; font-weight: 600; }
-        h3 { color: var(--secondary); margin-bottom: 15px; font-size: 18px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        th, td { border: 1px solid #e1e8ed; padding: 12px; text-align: left; font-size: 14px; }
-        th { background-color: #f8f9fa; color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
-        tr:nth-child(even) { background-color: #f9fbfd; }
+        .logo-area p {
+            font-size: 11px;
+            opacity: 0.8;
+        }
 
-        /* Editable cells style */
-        td[contenteditable="true"] { background-color: #eef5fc; cursor: text; transition: background 0.3s; }
-        td[contenteditable="true"]:focus { background-color: #ffffff; outline: 2px solid var(--secondary); box-shadow: inset 0 0 5px rgba(0,0,0,0.1); }
+        .header-right {
+            position: relative;
+        }
 
-        /* Select Dropdown for Status */
-        .status-select { padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 13px; border: 1px solid #ccc; cursor: pointer; }
-        .status-select.paid { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .status-select.unpaid { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            overflow: hidden;
+            border: 2px solid var(--accent);
+        }
+
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown, .side-drawer {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s ease;
+            z-index: 1100;
+            padding: 20px;
+            color: #333;
+        }
+
+        .profile-dropdown.active, .side-drawer.active {
+            right: 0;
+        }
+
+        .drawer-close {
+            font-size: 22px;
+            cursor: pointer;
+            float: right;
+            margin-bottom: 20px;
+            color: var(--warning);
+        }
+
+        .side-drawer {
+            left: -300px;
+            right: auto;
+        }
+        .side-drawer.active {
+            left: 0;
+        }
+
+        .drawer-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 10px;
+        }
+
+        .drawer-menu-list {
+            list-style: none;
+        }
+
+        .drawer-menu-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .drawer-menu-list li:hover {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            background: var(--card-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: 0.2s;
+            white-space: nowrap;
+            color: var(--text);
+        }
+
+        .nav-btn.active, .nav-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Sections */
+        .section-panel {
+            display: none;
+        }
+        .section-panel.active {
+            display: block;
+        }
+
+        /* Cards & Financial Overview */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Tables Styling */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            margin-bottom: 25px;
+            padding: 15px;
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        th {
+            background: var(--bg);
+            color: var(--text);
+            font-weight: bold;
+        }
+
+        [contenteditable="true"] {
+            background: #fffdf0;
+            border: 1px dashed #f39c12;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        /* Status Selectors */
+        .status-select {
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .status-paid {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-unpaid {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Settings Form Inside Drawer/Modal */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        .save-settings-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-header">
-        <h1>Al Noor Boys Hostel &amp; Mess Management</h1>
-        <p>Premium Admin Control Panel</p>
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <button class="menu-btn" onclick="toggleDrawer('sideDrawer')">☰</button>
+            <div class="logo-area">
+                <h1 id="brandTitle">Al Noor Boys Hostel</h1>
+                <p>Premium Admin Control Panel</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="profile-icon" onclick="toggleDrawer('profileDrawer')" id="profileDisplayIcon">
+                EN
+            </div>
+        </div>
+    </header>
+
+    <!-- Left Side Drawer (Navigation & Pages) -->
+    <div class="side-drawer" id="sideDrawer">
+        <span class="drawer-close" onclick="toggleDrawer('sideDrawer')">&times;</span>
+        <div class="drawer-title">Navigation & Info</div>
+        <ul class="drawer-menu-list">
+            <li onclick="switchTab('dashboard'); toggleDrawer('sideDrawer');">📊 Dashboard</li>
+            <li onclick="switchTab('hostel'); toggleDrawer('sideDrawer');">🏠 Hostel Management</li>
+            <li onclick="switchTab('mess'); toggleDrawer('sideDrawer');">🍽️ Mess Management</li>
+            <li onclick="switchTab('staff'); toggleDrawer('sideDrawer');">👨‍💼 Staff Management</li>
+            <li onclick="switchTab('settings'); toggleDrawer('sideDrawer');">⚙️ Settings & Credentials</li>
+            <li onclick="alert('Al Noor Boys Hostel & Mess Management v2.0 - Developed for Admin Control.')">ℹ️ About</li>
+            <li onclick="alert('Contact Support: Admin Helpline active 24/7.')">📞 Contact</li>
+        </ul>
+    </div>
+
+    <!-- Right Profile & Settings Drawer -->
+    <div class="profile-dropdown" id="profileDrawer">
+        <span class="drawer-close" onclick="toggleDrawer('profileDrawer')">&times;</span>
+        <div class="drawer-title">Admin Profile</div>
+        <div class="form-group">
+            <label>Admin Name</label>
+            <input type="text" id="adminNameInput" value="Eman">
+        </div>
+        <div class="form-group">
+            <label>Profile Initials / Icon Text</label>
+            <input type="text" id="adminInitialsInput" value="EN">
+        </div>
+        <button class="save-settings-btn" onclick="saveProfileChanges()">Save Profile</button>
     </div>
 
     <div class="container">
-        <!-- Main Navigation Bar -->
-        <div class="nav-menu">
-            <button class="nav-btn active" onclick="switchSection('dashboard', this)">Dashboard</button>
-            <button class="nav-btn" onclick="switchSection('hotel', this)">Hotel Management</button>
-            <button class="nav-btn" onclick="switchSection('hostel', this)">Hostel Management</button>
-            <button class="nav-btn" onclick="switchSection('staff', this)">Staff Management</button>
-            <button class="nav-btn" onclick="switchSection('mess', this)">Mess Management</button>
+        <!-- Navigation Tabs Bar -->
+        <div class="nav-tabs">
+            <button class="nav-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="nav-btn" onclick="switchTab('hostel')">Hostel Management</button>
+            <button class="nav-btn" onclick="switchTab('mess')">Mess Management</button>
+            <button class="nav-btn" onclick="switchTab('staff')">Staff Management</button>
+            <button class="nav-btn" onclick="switchTab('settings')">Settings</button>
         </div>
 
-        <!-- 1. Dashboard Section -->
-        <div id="dashboard" class="section active">
-            <h2>Financial Overview</h2>
-            <div class="dashboard-cards">
+        <!-- 1. DASHBOARD PANEL -->
+        <div id="dashboard" class="section-panel active">
+            <div class="cards-grid">
                 <div class="card">
-                    <h3>Total Income</h3>
-                    <div class="value" id="totalIncome">Rs. 0</div>
+                    <h3>TOTAL INCOME</h3>
+                    <div class="value" id="dashTotalIncome">Rs. 0</div>
                 </div>
-                <div class="card">
-                    <h3>Total Expense</h3>
-                    <div class="value" id="totalExpense">Rs. 0</div>
+                <div class="card" style="border-left-color: var(--warning);">
+                    <h3>TOTAL EXPENSE</h3>
+                    <div class="value" id="dashTotalExpense">Rs. 0</div>
                 </div>
-                <div class="card">
-                    <h3>Total Profit</h3>
-                    <div class="value" id="totalProfit" style="color: var(--success);">Rs. 0</div>
+                <div class="card" style="border-left-color: var(--accent);">
+                    <h3>NET PROFIT</h3>
+                    <div class="value" id="dashNetProfit">Rs. 0</div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Hotel Management Section -->
-        <div id="hotel" class="section">
-            <h2>Hotel Management &amp; Guest Records</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Guest Name</th>
-                        <th>Entry Date</th>
-                        <th>Total Bill</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td contenteditable="true">Ali Khan</td>
-                        <td contenteditable="true">2026-09-01</td>
-                        <td contenteditable="true" class="bill" oninput="calculateFinancials()">4500</td>
-                        <td>
-                            <select class="status-select paid" onchange="updateStatusColor(this); calculateFinancials()">
-                                <option value="paid" selected>Paid</option>
-                                <option value="unpaid">Unpaid</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">Ahmed Raza</td>
-                        <td contenteditable="true">2026-09-03</td>
-                        <td contenteditable="true" class="bill" oninput="calculateFinancials()">3000</td>
-                        <td>
-                            <select class="status-select unpaid" onchange="updateStatusColor(this); calculateFinancials()">
-                                <option value="paid">Paid</option>
-                                <option value="unpaid" selected>Unpaid</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- 3. Hostel Management Section -->
-        <div id="hostel" class="section">
-            <h2>Hostel Management &amp; Student Records</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Student Name</th>
-                        <th>Room No</th>
-                        <th>Fee Paid</th>
-                        <th>Baki Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td contenteditable="true">Bilal Ahmed</td>
-                        <td contenteditable="true">102</td>
-                        <td contenteditable="true" class="fee-paid" oninput="calculateFinancials()">10000</td>
-                        <td contenteditable="true">5000</td>
-                        <td>
-                            <select class="status-select unpaid" onchange="updateStatusColor(this); calculateFinancials()">
-                                <option value="paid">Paid</option>
-                                <option value="unpaid" selected>Unpaid</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- 4. Staff Management Section -->
-        <div id="staff" class="section">
-            <h2>Staff Management &amp; Payroll (January)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Staff Name</th>
-                        <th>Role</th>
-                        <th>Monthly Salary</th>
-                        <th>Advance</th>
-                        <th>Bonus</th>
-                        <th>Total Payable</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td contenteditable="true">Allah Ditta</td>
-                        <td contenteditable="true">Cleaner</td>
-                        <td contenteditable="true" class="salary" oninput="calculateStaffPay(this)">25000</td>
-                        <td contenteditable="true" class="advance" oninput="calculateStaffPay(this)">2000</td>
-                        <td contenteditable="true" class="bonus" oninput="calculateStaffPay(this)">1000</td>
-                        <td class="total-payable">24000</td>
-                        <td>
-                            <select class="status-select paid" onchange="updateStatusColor(this); calculateFinancials()">
-                                <option value="paid" selected>Paid</option>
-                                <option value="unpaid">Unpaid</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- 5. Mess Management Section -->
-        <div id="mess" class="section">
-            <h2>Mess Management</h2>
-            <div class="sub-nav">
-                <button class="sub-btn active" onclick="switchSubSection('daily-mess', this)">Daily Tracking</button>
-                <button class="sub-btn" onclick="switchSubSection('monthly-mess', this)">Monthly Overview</button>
-            </div>
-
-            <!-- Daily Mess Tracking -->
-            <div id="daily-mess" class="sub-section active">
-                <h3>Daily Meal Tracking</h3>
-                <table>
+        <!-- 2. HOSTEL MANAGEMENT -->
+        <div id="hostel" class="section-panel">
+            <div class="table-container">
+                <div class="table-title">Student Room & Fee Records</div>
+                <table id="hostelTable">
                     <thead>
                         <tr>
-                            <th>Member Name</th>
-                            <th>Date</th>
-                            <th>Breakfast</th>
-                            <th>Lunch</th>
-                            <th>Dinner</th>
-                            <th>Extra/4th</th>
-                            <th>Daily Total</th>
+                            <th>Student Name</th>
+                            <th>Room No</th>
+                            <th>Fee (Rs.)</th>
+                            <th>Baki Amount</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td contenteditable="true">Usman Ali</td>
-                            <td contenteditable="true">2026-04-04</td>
-                            <td contenteditable="true" class="meal" oninput="calculateDailyTotal(this)">150</td>
-                            <td contenteditable="true" class="meal" oninput="calculateDailyTotal(this)">200</td>
-                            <td contenteditable="true" class="meal" oninput="calculateDailyTotal(this)">200</td>
-                            <td contenteditable="true" class="meal" oninput="calculateDailyTotal(this)">100</td>
-                            <td class="daily-total">650</td>
+                            <td contenteditable="true">Ali Khan</td>
+                            <td contenteditable="true">101</td>
+                            <td class="h-fee" contenteditable="true">12000</td>
+                            <td class="h-baki" contenteditable="true">0</td>
                             <td>
-                                <select class="status-select paid" onchange="updateStatusColor(this)">
+                                <select class="status-select status-paid" onchange="updateStatusStyle(this); calculateFinancials();">
                                     <option value="paid" selected>Paid</option>
                                     <option value="unpaid">Unpaid</option>
                                 </select>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Monthly Mess Overview -->
-            <div id="monthly-mess" class="sub-section">
-                <h3>Monthly Mess Overview</h3>
-                <table>
-                    <thead>
                         <tr>
-                            <th>Member Name</th>
-                            <th>Total Meals</th>
-                            <th>Total Billed</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td contenteditable="true">Usman Ali</td>
-                            <td contenteditable="true">90</td>
-                            <td contenteditable="true">13500</td>
+                            <td contenteditable="true">Ahmed Raza</td>
+                            <td contenteditable="true">102</td>
+                            <td class="h-fee" contenteditable="true">12000</td>
+                            <td class="h-baki" contenteditable="true">2000</td>
                             <td>
-                                <select class="status-select unpaid" onchange="updateStatusColor(this)">
+                                <select class="status-select status-unpaid" onchange="updateStatusStyle(this); calculateFinancials();">
                                     <option value="paid">Paid</option>
                                     <option value="unpaid" selected>Unpaid</option>
                                 </select>
@@ -276,102 +427,207 @@
                 </table>
             </div>
         </div>
+
+        <!-- 3. MESS MANAGEMENT -->
+        <div id="mess" class="section-panel">
+            <div class="table-container">
+                <div class="table-title">Mess Monthly Overview</div>
+                <table id="messTable">
+                    <thead>
+                        <tr>
+                            <th>Member Name</th>
+                            <th>Breakfast</th>
+                            <th>Lunch</th>
+                            <th>Dinner</th>
+                            <th>Tea/Extra</th>
+                            <th>Total Bill (Rs.)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true">Ali Khan</td>
+                            <td class="m-bf" contenteditable="true">30</td>
+                            <td class="m-lunch" contenteditable="true">30</td>
+                            <td class="m-din" contenteditable="true">30</td>
+                            <td class="m-extra" contenteditable="true">500</td>
+                            <td class="m-total">0</td>
+                            <td>
+                                <select class="status-select status-paid" onchange="updateStatusStyle(this); calculateFinancials();">
+                                    <option value="paid" selected>Paid</option>
+                                    <option value="unpaid">Unpaid</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. STAFF MANAGEMENT -->
+        <div id="staff" class="section-panel">
+            <div class="table-container">
+                <div class="table-title">Staff Payroll Management</div>
+                <table id="staffTable">
+                    <thead>
+                        <tr>
+                            <th>Staff Name</th>
+                            <th>Role</th>
+                            <th>Monthly Salary</th>
+                            <th>Advance</th>
+                            <th>Bonus</th>
+                            <th>Total Payable</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true">Gul Sher</td>
+                            <td contenteditable="true">Cook</td>
+                            <td class="s-sal" contenteditable="true">25000</td>
+                            <td class="s-adv" contenteditable="true">2000</td>
+                            <td class="s-bonus" contenteditable="true">1000</td>
+                            <td class="s-payable">0</td>
+                            <td>
+                                <select class="status-select status-paid" onchange="updateStatusStyle(this); calculateFinancials();">
+                                    <option value="paid" selected>Paid</option>
+                                    <option value="unpaid">Unpaid</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. SETTINGS & CREDENTIALS PANEL -->
+        <div id="settings" class="section-panel">
+            <div class="table-container" style="max-width: 500px; margin: 0 auto;">
+                <div class="table-title">Admin Account & Security Settings</div>
+                <div class="form-group">
+                    <label>Admin Username</label>
+                    <input type="text" id="settingUsername" value="admin">
+                </div>
+                <div class="form-group">
+                    <label>New Admin Password</label>
+                    <input type="password" id="settingPassword" placeholder="Enter new password">
+                </div>
+                <button class="save-settings-btn" onclick="saveAdminCredentials()">Update Credentials</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        function switchSection(sectionId, btnElement) {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(sec => sec.classList.remove('active'));
-
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            document.getElementById(sectionId).classList.add('active');
-            btnElement.classList.add('active');
+        // Drawer toggle utility
+        function toggleDrawer(drawerId) {
+            document.getElementById(drawerId).classList.toggle('active');
         }
 
-        function switchSubSection(subSectionId, btnElement) {
-            const subSections = document.querySelectorAll('.sub-section');
-            subSections.forEach(sub => sub.classList.remove('active'));
-
-            const subButtons = document.querySelectorAll('.sub-btn');
-            subButtons.forEach(btn => btn.classList.remove('active'));
-
-            document.getElementById(subSectionId).classList.add('active');
-            btnElement.classList.add('active');
+        // Tab Switching logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.section-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event && event.target.classList.add('active');
         }
 
-        // Change select background based on status
-        function updateStatusColor(selectElement) {
-            if (selectElement.value === 'paid') {
-                selectElement.className = 'status-select paid';
+        // Status select background styling updater
+        function updateStatusStyle(selectObj) {
+            if(selectObj.value === 'paid') {
+                selectObj.className = 'status-select status-paid';
             } else {
-                selectElement.className = 'status-select unpaid';
+                selectObj.className = 'status-select status-unpaid';
             }
         }
 
-        // Calculations for Daily Mess
-        function calculateDailyTotal(element) {
-            const row = element.closest('tr');
-            const meals = row.querySelectorAll('.meal');
-            let total = 0;
-            meals.forEach(meal => {
-                total += parseFloat(meal.innerText) || 0;
-            });
-            row.querySelector('.daily-total').innerText = total;
-        }
-
-        // Calculations for Staff Payroll
-        function calculateStaffPay(element) {
-            const row = element.closest('tr');
-            const salary = parseFloat(row.querySelector('.salary').innerText) || 0;
-            const advance = parseFloat(row.querySelector('.advance').innerText) || 0;
-            const bonus = parseFloat(row.querySelector('.bonus').innerText) || 0;
-            const total = salary - advance + bonus;
-            row.querySelector('.total-payable').innerText = total;
-            calculateFinancials();
-        }
-
-        // General Financials calculation for Dashboard
+        // Automatic Financial Calculations
         function calculateFinancials() {
             let totalIncome = 0;
             let totalExpense = 0;
 
-            // Income from Hotel (Only if paid)
-            const hotelRows = document.querySelectorAll('#hotel tbody tr');
-            hotelRows.forEach(row => {
-                const bill = parseFloat(row.querySelector('.bill').innerText) || 0;
-                const status = row.querySelector('.status-select').value;
-                if (status === 'paid') {
-                    totalIncome += bill;
+            // 1. Hostel Fee Calculation
+            document.querySelectorAll('#hostelTable tbody tr').forEach(row => {
+                let fee = parseFloat(row.querySelector('.h-fee').innerText) || 0;
+                let status = row.querySelector('.status-select').value;
+                if(status === 'paid') {
+                    totalIncome += fee;
                 }
             });
 
-            // Income from Hostel
-            const hostelFees = document.querySelectorAll('#hostel .fee-paid');
-            hostelFees.forEach(fee => {
-                totalIncome += parseFloat(fee.innerText) || 0;
-            });
+            // 2. Mess Bill Calculation
+            document.querySelectorAll('#messTable tbody tr').forEach(row => {
+                let bf = parseFloat(row.querySelector('.m-bf').innerText) || 0;
+                let lunch = parseFloat(row.querySelector('.m-lunch').innerText) || 0;
+                let din = parseFloat(row.querySelector('.m-din').innerText) || 0;
+                let extra = parseFloat(row.querySelector('.m-extra').innerText) || 0;
+                
+                let totalBill = (bf * 30) + (lunch * 30) + (din * 30) + extra;
+                row.querySelector('.m-total').innerText = totalBill;
 
-            // Expense from Staff (Only if paid)
-            const staffRows = document.querySelectorAll('#staff tbody tr');
-            staffRows.forEach(row => {
-                const payable = parseFloat(row.querySelector('.total-payable').innerText) || 0;
-                const status = row.querySelector('.status-select').value;
-                if (status === 'paid') {
-                    totalExpense += payable;
+                let status = row.querySelector('.status-select').value;
+                if(status === 'paid') {
+                    totalIncome += totalBill;
                 }
             });
 
-            // Update Dashboard
-            document.getElementById('totalIncome').innerText = 'Rs. ' + totalIncome.toLocaleString();
-            document.getElementById('totalExpense').innerText = 'Rs. ' + totalExpense.toLocaleString();
-            document.getElementById('totalProfit').innerText = 'Rs. ' + (totalIncome - totalExpense).toLocaleString();
+            // 3. Staff Salary Expense Calculation
+            document.querySelectorAll('#staffTable tbody tr').forEach(row => {
+                let sal = parseFloat(row.querySelector('.s-sal').innerText) || 0;
+                let adv = parseFloat(row.querySelector('.s-adv').innerText) || 0;
+                let bonus = parseFloat(row.querySelector('.s-bonus').innerText) || 0;
+
+                let payable = sal - adv + bonus;
+                row.querySelector('.s-payable').innerText = payable;
+
+                totalExpense += payable;
+            });
+
+            // Update Dashboard Overview Cards
+            document.getElementById('dashTotalIncome').innerText = 'Rs. ' + totalIncome.toLocaleString();
+            document.getElementById('dashTotalExpense').innerText = 'Rs. ' + totalExpense.toLocaleString();
+            document.getElementById('dashNetProfit').innerText = 'Rs. ' + (totalIncome - totalExpense).toLocaleString();
         }
 
-        // Initial Calculations on load
+        // Save Profile info
+        function saveProfileChanges() {
+            let name = document.getElementById('adminNameInput').value;
+            let initials = document.getElementById('adminInitialsInput').value;
+            document.getElementById('profileDisplayIcon').innerText = initials;
+            localStorage.setItem('adminName', name);
+            localStorage.setItem('adminInitials', initials);
+            alert('Profile updated successfully!');
+            toggleDrawer('profileDrawer');
+        }
+
+        // Save Admin Credentials
+        function saveAdminCredentials() {
+            let user = document.getElementById('settingUsername').value;
+            let pass = document.getElementById('settingPassword').value;
+            if(!pass) {
+                alert('Please enter a valid password.');
+                return;
+            }
+            localStorage.setItem('adminUser', user);
+            localStorage.setItem('adminPass', pass);
+            alert('Admin username and password updated successfully!');
+        }
+
+        // Attach auto-recalculation listeners to editable cells
+        document.addEventListener('input', () => {
+            calculateFinancials();
+        });
+
+        // Initial run on load
         window.onload = function() {
             calculateFinancials();
+            if(localStorage.getItem('adminInitials')) {
+                document.getElementById('profileDisplayIcon').innerText = localStorage.getItem('adminInitials');
+                document.getElementById('adminInitialsInput').value = localStorage.getItem('adminInitials');
+            }
+            if(localStorage.getItem('adminName')) {
+                document.getElementById('adminNameInput').value = localStorage.getItem('adminName');
+            }
         }
     </script>
 </body>
