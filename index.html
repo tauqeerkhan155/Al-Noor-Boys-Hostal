@@ -75,6 +75,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: 0.3s;
+            z-index: 100;
         }
         .brand { font-size: 14px; font-weight: bold; color: var(--text-main); margin-bottom: 5px; }
         .brand-sub { font-size: 10px; color: var(--text-muted); margin-bottom: 25px; }
@@ -102,6 +104,7 @@
             margin-left: 240px;
             flex: 1;
             padding: 20px 30px;
+            transition: 0.3s;
         }
 
         /* Header */
@@ -111,6 +114,8 @@
             align-items: center;
             margin-bottom: 25px;
             position: relative;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         .search-bar input {
             background: var(--bg-card);
@@ -119,6 +124,7 @@
             border-radius: 20px;
             color: white;
             width: 300px;
+            max-width: 100%;
             font-size: 13px;
         }
         .user-container { position: relative; }
@@ -160,6 +166,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .dash-title-row h2 { font-size: 20px; }
         .dash-title-row p { font-size: 12px; color: var(--text-muted); }
@@ -186,13 +194,14 @@
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
+            overflow-x: auto;
         }
         .card-box h3 { font-size: 14px; margin-bottom: 15px; }
 
         .panel { display: none; }
         .panel.active { display: block; }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; min-width: 500px; }
         th, td { padding: 10px; border-bottom: 1px solid var(--border-clr); font-size: 13px; }
         th { color: var(--text-muted); font-size: 11px; }
         [contenteditable="true"] { background: rgba(59,130,246,0.1); border: 1px dashed var(--accent-blue); padding: 4px; border-radius: 4px; color: white; }
@@ -262,6 +271,41 @@
         }
         .perf-circle h4 { font-size: 16px; color: var(--accent-green); margin-bottom: 5px; }
         .perf-circle p { font-size: 11px; color: var(--text-muted); }
+
+        /* RESPONSIVE MEDIA QUERIES FOR MOBILE & DESKTOP TOGGLE FEEL */
+        @media (max-width: 1024px) {
+            .metrics-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            aside {
+                width: 70px;
+                padding: 10px;
+            }
+            aside .brand, aside .brand-sub, aside .menu-list li span:nth-child(2) {
+                display: none;
+            }
+            aside .menu-list li {
+                justify-content: center;
+                font-size: 18px;
+                padding: 12px;
+            }
+            .main-wrapper {
+                margin-left: 70px;
+                padding: 15px;
+            }
+            .metrics-container {
+                grid-template-columns: 1fr;
+            }
+            .search-bar input {
+                width: 200px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -290,11 +334,11 @@
                 <div class="brand">🌙 Al Noor Boys Hostel</div>
                 <div class="brand-sub">VIP Management System</div>
                 <ul class="menu-list">
-                    <li class="active" onclick="switchSection('dashboard', this)"><span>📊 Dashboard</span><span>›</span></li>
-                    <li onclick="switchSection('students', this)"><span>👥 Students Management</span><span>›</span></li>
-                    <li onclick="switchSection('rooms', this)"><span>🛏️ Rooms & Seats</span><span>›</span></li>
-                    <li onclick="switchSection('staff', this)"><span>👨‍💼 Staff Payroll</span><span>›</span></li>
-                    <li onclick="switchSection('mess', this)"><span>🍽️ Mess Management</span><span>›</span></li>
+                    <li class="active" onclick="switchSection('dashboard', this)" title="Dashboard"><span>📊</span><span>Dashboard</span></li>
+                    <li onclick="switchSection('students', this)" title="Students"><span>👥</span><span>Students Management</span></li>
+                    <li onclick="switchSection('rooms', this)" title="Rooms"><span>🛏️</span><span>Rooms & Seats</span></li>
+                    <li onclick="switchSection('staff', this)" title="Staff"><span>👨‍💼</span><span>Staff Payroll</span></li>
+                    <li onclick="switchSection('mess', this)" title="Mess"><span>🍽️</span><span>Mess Management</span></li>
                 </ul>
             </div>
         </aside>
@@ -447,7 +491,7 @@
                 </div>
 
                 <div id="roomDetailDirective" class="card-box" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                         <h3 id="detailRoomTitle">Room Details</h3>
                         <button class="btn-action" onclick="backToRoomList()" style="background: var(--border-clr);">← Back to Rooms List</button>
                     </div>
@@ -511,7 +555,7 @@
                 </div>
 
                 <div id="messDetailDirective" class="card-box" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                         <h3 id="detailMemberTitle">Member Daily History</h3>
                         <button class="btn-action" onclick="backToMessList()" style="background: var(--border-clr);">← Back to Members List</button>
                     </div>
@@ -532,7 +576,7 @@
                     </table>
                     <button class="btn-action" onclick="addMessDay()">+ Add Next Day Log</button>
                     
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(59,130,246,0.1); border-radius: 8px; border: 1px solid var(--accent-blue); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(59,130,246,0.1); border-radius: 8px; border: 1px solid var(--accent-blue); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <span style="font-weight: bold; font-size: 14px;">Total Monthly Accumulation (All Days):</span>
                         <span id="detailGrandTotal" style="font-size: 18px; font-weight: bold; color: var(--accent-orange);">0</span>
                     </div>
