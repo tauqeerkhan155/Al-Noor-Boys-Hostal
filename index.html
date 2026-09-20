@@ -1111,30 +1111,11 @@
                 row.querySelector('.s-rem').innerText = rem;
 
                 let status = row.querySelector('.status-badge').value;
-                if(status === 'paid' || paid > 0) {
+                if(status === 'paid') {
                     totalIncome += paid;
                 }
-                if(rem > 0) {
+                if(rem > 0 || status === 'unpaid') {
                     pendingFees += rem;
-                }
-            });
-
-            let memberRows = document.querySelectorAll('#messMembersTable tbody tr');
-            memberRows.forEach(row => {
-                let mName = row.cells[0].innerText.trim();
-                let logs = messMemberLogs[mName] || [];
-                let memberGrandTotal = 0;
-                logs.forEach(l => {
-                    memberGrandTotal += (parseFloat(l.bf)||0) + (parseFloat(l.lunch)||0) + (parseFloat(l.din)||0) + (parseFloat(l.extra)||0);
-                });
-                let billCell = row.querySelector('.m-total-bill');
-                if(billCell) billCell.innerText = memberGrandTotal;
-
-                let status = row.querySelector('.status-badge').value;
-                if(status === 'paid') {
-                    totalIncome += memberGrandTotal;
-                } else {
-                    pendingFees += memberGrandTotal;
                 }
             });
 
@@ -1152,12 +1133,9 @@
                 }
             });
 
-            let netProfit = totalIncome - totalExpense;
-
             document.getElementById('dashTotalIncome').innerText = 'Rs. ' + totalIncome.toLocaleString();
             document.getElementById('dashTotalExpense').innerText = 'Rs. ' + totalExpense.toLocaleString();
             document.getElementById('dashPendingFees').innerText = 'Rs. ' + pendingFees.toLocaleString();
-            document.getElementById('dashNetProfit').innerText = 'Rs. ' + netProfit.toLocaleString();
         }
 
         function addStudentRow() {
