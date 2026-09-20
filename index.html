@@ -31,6 +31,7 @@
             color: var(--text-main);
             display: flex;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Login Screen */
@@ -94,19 +95,6 @@
             color: var(--accent-blue);
         }
 
-        .btn-logout-sidebar {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--accent-red);
-            border: 1px solid var(--accent-red);
-            padding: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-        }
-
         /* Main Wrapper */
         .main-wrapper {
             margin-left: 240px;
@@ -120,6 +108,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
+            position: relative;
         }
         .search-bar input {
             background: var(--bg-card);
@@ -130,10 +119,39 @@
             width: 300px;
             font-size: 13px;
         }
-        .user-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .user-container { position: relative; }
+        .user-info { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: 0.3s; }
+        .user-info:hover { background: rgba(255,255,255,0.05); }
         .u-avatar { width: 35px; height: 35px; border-radius: 50%; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; }
         .u-text h4 { font-size: 13px; }
         .u-text p { font-size: 10px; color: var(--text-muted); }
+
+        /* Profile Dropdown Menu */
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 55px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-clr);
+            border-radius: 8px;
+            width: 180px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .profile-dropdown.show { display: block; }
+        .profile-dropdown a {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-clr);
+            transition: 0.2s;
+        }
+        .profile-dropdown a:hover { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .profile-dropdown a:last-child { border-bottom: none; color: var(--accent-red); }
 
         .dash-title-row {
             display: flex;
@@ -193,11 +211,11 @@
             <h2>Al Noor VIP Login</h2>
             <div class="f-group">
                 <label>Username</label>
-                <input type="text" id="lUser" placeholder="admin">
+                <input type="text" id="lUser" placeholder="Enter username...">
             </div>
             <div class="f-group">
                 <label>Password</label>
-                <input type="password" id="lPass" placeholder="password">
+                <input type="password" id="lPass" placeholder="Enter password...">
             </div>
             <button class="btn-login" onclick="tryLogin()">Login</button>
         </div>
@@ -206,7 +224,7 @@
     <!-- App Container -->
     <div id="appContainer">
         <!-- Sidebar -->
-        aside>
+        <aside>
             <div>
                 <div class="brand">🌙 Al Noor Boys Hostel</div>
                 <div class="brand-sub">VIP Management System</div>
@@ -216,10 +234,8 @@
                     <li onclick="switchSection('rooms', this)"><span>🛏️ Rooms & Seats</span><span>›</span></li>
                     <li onclick="switchSection('staff', this)"><span>👨‍💼 Staff Payroll</span><span>›</span></li>
                     <li onclick="switchSection('mess', this)"><span>🍽️ Mess Management</span><span>›</span></li>
-                    <li onclick="switchSection('settings', this)"><span>⚙️ Settings & Profile</span><span>›</span></li>
                 </ul>
             </div>
-            <button class="btn-logout-sidebar" onclick="logoutSystem()">🔒 Logout</button>
         </aside>
 
         <!-- Main Wrapper -->
@@ -228,11 +244,21 @@
                 <div class="search-bar">
                     <input type="text" placeholder="Search records...">
                 </div>
-                <div class="user-info" onclick="switchSection('settings', document.querySelectorAll('.menu-list li')[5])">
-                    <div class="u-avatar" id="avatarText">JW</div>
-                    <div class="u-text">
-                        <h4 id="profileName">Jawad</h4>
-                        <p>Super Admin</p>
+                <!-- Profile & Dropdown Trigger -->
+                <div class="user-container">
+                    <div class="user-info" onclick="toggleProfileDropdown(event)">
+                        <div class="u-avatar" id="avatarText">JW</div>
+                        <div class="u-text">
+                            <h4 id="profileName">Jawad</h4>
+                            <p>Super Admin ▼</p>
+                        </div>
+                    </div>
+                    <!-- Dropdown Menu -->
+                    <div class="profile-dropdown" id="profileDropdownMenu">
+                        <a href="javascript:void(0)" onclick="switchSection('settings')">⚙️ Settings</a>
+                        <a href="javascript:void(0)" onclick="switchSection('about')">ℹ️ About System</a>
+                        <a href="javascript:void(0)" onclick="switchSection('contact')">📞 Contact Support</a>
+                        <a href="javascript:void(0)" onclick="logoutSystem()">🔒 Logout</a>
                     </div>
                 </div>
             </header>
@@ -367,7 +393,6 @@
 
             <!-- 5. MESS MANAGEMENT -->
             <div id="mess" class="panel">
-                <!-- View 1: Members List -->
                 <div id="messListDirective" class="card-box">
                     <h3>Mess Members Directory (Click Name for 30-Day Daily Log History)</h3>
                     <table id="messMembersTable">
@@ -396,13 +421,12 @@
                     <button class="btn-action" onclick="addMessMember()">+ Add New Member</button>
                 </div>
 
-                <!-- View 2: Member 30-Day Daily Log History Details -->
                 <div id="messDetailDirective" class="card-box" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3 id="detailMemberTitle">Member Daily History</h3>
                         <button class="btn-action" onclick="backToMessList()" style="background: var(--border-clr);">← Back to Members List</button>
                     </div>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Manage daily meal logs (Breakfast, Lunch, Dinner, Extra) from Day 1 onwards. Totals update automatically.</p>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Manage daily meal logs (Breakfast, Lunch, Dinner, Extra) from Day 1 onwards.</p>
                     
                     <table id="memberDaysTable">
                         <thead>
@@ -415,9 +439,7 @@
                                 <th>Daily Total</th>
                             </tr>
                         </thead>
-                        <tbody id="daysTableBody">
-                            <!-- Populated dynamically -->
-                        </tbody>
+                        <tbody id="daysTableBody"></tbody>
                     </table>
                     <button class="btn-action" onclick="addMessDay()">+ Add Next Day Log</button>
                     
@@ -431,7 +453,7 @@
             <!-- 6. SETTINGS -->
             <div id="settings" class="panel">
                 <div class="card-box" style="max-width: 500px;">
-                    <h3>System Settings & Admin Profile</h3>
+                    <h3>⚙️ System Settings & Admin Profile</h3>
                     <div class="f-group">
                         <label>Admin Profile Name</label>
                         <input type="text" id="setNameInput" value="Jawad">
@@ -452,14 +474,35 @@
                         </select>
                     </div>
                     <button class="btn-login" onclick="saveAdminSettings()">Save Configurations</button>
+                </div>
+            </div>
 
-                    <div style="margin-top: 25px; border-top: 1px solid var(--border-clr); padding-top: 15px;">
-                        <h4 style="font-size: 13px; margin-bottom: 5px; color: var(--accent-blue);">ℹ️ About Management System</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">Al Noor Boys Hostel & Mess Management VIP Control Panel v11.0. Secure multi-department administration suite.</p>
-                        
-                        <h4 style="font-size: 13px; margin-top: 15px; margin-bottom: 5px; color: var(--accent-green);">📞 Contact Support</h4>
-                        <p style="font-size: 12px; color: var(--text-muted);">For technical assistance or system inquiries, reach out to the chief administrator 24/7.</p>
-                    </div>
+            <!-- 7. ABOUT -->
+            <div id="about" class="panel">
+                <div class="card-box" style="max-width: 500px;">
+                    <h3>ℹ️ About Management System</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px;">
+                        Al Noor Boys Hostel & Mess Management VIP Control Panel v15.0. Designed specifically for secure, multi-department administration including student dues, room seat allocation, staff payroll, and daily mess consumption tracking.
+                    </p>
+                    <p style="font-size: 13px; color: var(--text-muted);">
+                        <strong>System Supervisor:</strong> Jawad<br>
+                        <strong>Official Email:</strong> support@alnoorhostel.com
+                    </p>
+                </div>
+            </div>
+
+            <!-- 8. CONTACT -->
+            <div id="contact" class="panel">
+                <div class="card-box" style="max-width: 500px;">
+                    <h3>📞 Contact Support</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px;">
+                        For technical assistance, software configuration inquiries, or system support, you can reach out to our administration team 24/7.
+                    </p>
+                    <p style="font-size: 13px; color: var(--text-muted);">
+                        <strong>Phone / WhatsApp:</strong> +92 300 1234567<br>
+                        <strong>Email Support:</strong> admin@alnoorhostel.com<br>
+                        <strong>Location:</strong> Al Noor Boys Hostel Main Office, Pakistan
+                    </p>
                 </div>
             </div>
 
@@ -492,6 +535,7 @@
             
             let savedU = localStorage.getItem('adminUser') || 'admin';
             document.getElementById('setUname').value = savedU;
+            document.getElementById('lUser').value = savedU;
 
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             document.getElementById('currentDateBadge').innerText = '📅 ' + new Date().toLocaleDateString('en-US', options);
@@ -499,33 +543,58 @@
             calculateAll();
         }
 
+        function toggleProfileDropdown(event) {
+            event.stopPropagation();
+            let menu = document.getElementById('profileDropdownMenu');
+            menu.classList.toggle('show');
+        }
+
+        window.onclick = function(event) {
+            let menu = document.getElementById('profileDropdownMenu');
+            if (menu && menu.classList.contains('show')) {
+                menu.classList.remove('show');
+            }
+        }
+
         function tryLogin() {
-            let u = document.getElementById('lUser').value.trim();
-            let p = document.getElementById('lPass').value.trim();
+            let uInput = document.getElementById('lUser').value.trim();
+            let pInput = document.getElementById('lPass').value.trim();
             
             let savedU = localStorage.getItem('adminUser') || 'admin';
             let savedP = localStorage.getItem('adminPass') || 'admin123';
 
-            if(u === savedU && p === savedP) {
+            if(uInput === savedU && pInput === savedP) {
                 sessionStorage.setItem('auth', 'true');
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'flex';
+                document.getElementById('lPass').value = '';
             } else {
-                alert('गलत यूजरनेम या पासवर्ड! (डिफ़ॉल्ट: admin / admin123)');
+                alert('Ghalat username ya password! Agar details ghalat hain toh ye login nahi hoga.');
             }
         }
 
         function logoutSystem() {
             sessionStorage.removeItem('auth');
-            location.reload();
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('lPass').value = '';
+            document.getElementById('profileDropdownMenu').classList.remove('show');
         }
 
         function switchSection(secId, el) {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.menu-list li').forEach(l => l.classList.remove('active'));
             
-            document.getElementById(secId).classList.add('active');
-            if(el) el.classList.add('active');
+            let targetPanel = document.getElementById(secId);
+            if(targetPanel) {
+                targetPanel.classList.add('active');
+            }
+
+            if(el) {
+                el.classList.add('active');
+            }
+
+            document.getElementById('profileDropdownMenu').classList.remove('show');
 
             if(secId === 'mess') {
                 backToMessList();
@@ -643,7 +712,6 @@
             let totalIncome = 0;
             let totalExpense = 0;
 
-            // 1. Students / Hostel Fees Calculation
             document.querySelectorAll('#studentTable tbody tr').forEach(row => {
                 let fee = parseFloat(row.querySelector('.s-fee').innerText) || 0;
                 let paid = parseFloat(row.querySelector('.s-paid').innerText) || 0;
@@ -656,7 +724,6 @@
                 }
             });
 
-            // 2. Mess Members Monthly Cumulative Calculation
             let memberRows = document.querySelectorAll('#messMembersTable tbody tr');
             memberRows.forEach(row => {
                 let mName = row.cells[0].innerText.trim();
@@ -673,7 +740,6 @@
                 }
             });
 
-            // 3. Staff Salary Expenses Calculation
             document.querySelectorAll('#staffTable tbody tr').forEach(row => {
                 let sal = parseFloat(row.querySelector('.st-sal').innerText) || 0;
                 let adv = parseFloat(row.querySelector('.st-adv').innerText) || 0;
@@ -714,7 +780,7 @@
 
             if(name) localStorage.setItem('adminName', name);
             if(uname) localStorage.setItem('adminUser', uname);
-            if(pass && pass.trim() !== "") {
+            if(pass) {
                 localStorage.setItem('adminPass', pass);
             }
             localStorage.setItem('lockMode', lock);
@@ -722,7 +788,9 @@
             document.getElementById('profileName').innerText = name || 'Jawad';
             document.getElementById('avatarText').innerText = (name || 'Jawad').substring(0,2).toUpperCase();
             
-            alert('सेटिंग्स सफलतापूर्वक सेव हो गई हैं! अब आप नए पासवर्ड से लॉग इन कर सकते हैं।');
+            document.getElementById('lUser').value = uname || 'admin';
+
+            alert('Settings successfully save ho gayi hain!');
         }
 
         document.addEventListener('input', () => {
