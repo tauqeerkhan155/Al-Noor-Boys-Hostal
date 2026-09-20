@@ -1071,9 +1071,9 @@
                     <td><span class="member-link" onclick="openMemberHistory('${name}')">View 30-Day History</span></td>
                     <td class="m-total-bill" style="font-weight: bold; color: var(--accent-orange);">90</td>
                     <td>
-                        <select class="status-badge bg-paid" onchange="updateStatusStyle(this); saveDataToStorage();">
-                            <option value="paid" selected>Paid</option>
-                            <option value="unpaid">Unpaid</option>
+                        <select class="status-badge bg-unpaid" onchange="updateStatusStyle(this); saveDataToStorage();">
+                            <option value="paid">Paid</option>
+                            <option value="unpaid" selected>Unpaid</option>
                         </select>
                     </td>
                     <td><button class="btn-delete" onclick="deleteMessMember(this)">Delete</button></td>
@@ -1104,6 +1104,7 @@
             let totalExpense = 0;
             let pendingFees = 0;
 
+            // 1. Students Calculation
             document.querySelectorAll('#studentTable tbody tr').forEach(row => {
                 let fee = parseFloat(row.querySelector('.s-fee').innerText) || 0;
                 let paid = parseFloat(row.querySelector('.s-paid').innerText) || 0;
@@ -1114,11 +1115,32 @@
                 if(status === 'paid') {
                     totalIncome += paid;
                 }
-                if(rem > 0 || status === 'unpaid') {
-                    pendingFees += rem;
+                if(status === 'unpaid' || rem > 0) {
+                    pendingFees += (status === 'unpaid' ? fee : rem);
                 }
             });
 
+            // 2. Mess Members Calculation
+            let memberRows = document.querySelectorAll('#messMembersTable tbody tr');
+            memberRows.forEach(row => {
+                let mName = row.cells[0].innerText.trim();
+                let logs = messMemberLogs[mName] || [];
+                let memberGrandTotal = 0;
+                logs.forEach(l => {
+                    memberGrandTotal += (parseFloat(l.bf)||0) + (parseFloat(l.lunch)||0) + (parseFloat(l.din)||0) + (parseFloat(l.extra)||0);
+                });
+                let billCell = row.querySelector('.m-total-bill');
+                if(billCell) billCell.innerText = memberGrandTotal;
+
+                let status = row.querySelector('.status-badge').value;
+                if(status === 'paid') {
+                    totalIncome += memberGrandTotal;
+                } else if(status === 'unpaid') {
+                    pendingFees += memberGrandTotal;
+                }
+            });
+
+            // 3. Staff Salary Calculation (Only count if status is Paid)
             document.querySelectorAll('#staffTable tbody tr').forEach(row => {
                 let sal = parseFloat(row.querySelector('.st-sal').innerText) || 0;
                 let adv = parseFloat(row.querySelector('.st-adv').innerText) || 0;
@@ -1133,6 +1155,7 @@
                 }
             });
 
+            // Update UI dashboard cards
             document.getElementById('dashTotalIncome').innerText = 'Rs. ' + totalIncome.toLocaleString();
             document.getElementById('dashTotalExpense').innerText = 'Rs. ' + totalExpense.toLocaleString();
             document.getElementById('dashPendingFees').innerText = 'Rs. ' + pendingFees.toLocaleString();
@@ -1183,9 +1206,9 @@
                 <td class="st-bonus" contenteditable="true" oninput="saveDataToStorage()">0</td>
                 <td class="st-total">15000</td>
                 <td>
-                    <select class="status-badge bg-paid" onchange="updateStatusStyle(this); saveDataToStorage();">
-                        <option value="paid" selected>Paid</option>
-                        <option value="unpaid">Unpaid</option>
+                    <select class="status-badge bg-unpaid" onchange="updateStatusStyle(this); saveDataToStorage();">
+                        <option value="paid">Paid</option>
+                        <option value="unpaid" selected>Unpaid</option>
                     </select>
                 </td>
                 <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
