@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Noor Boys Hostel &amp; Mess Management</title>
+    <style>
+        :root {
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --accent: #f39c12;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --success: #27ae60;
+            --warning: #c0392b;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg); color: var(--text); }
+
+        /* Header */
+        .dashboard-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #ffffff; padding: 25px 0; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .dashboard-header h1 { font-size: 28px; margin-bottom: 8px; font-weight: 600; }
+
+        /* Container & Navigation */
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 20px; }
+        .nav-menu { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .nav-btn { background: var(--secondary); color: #ffffff; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500; transition: all 0.3s ease; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+        .nav-btn:hover, .nav-btn.active { background: var(--accent); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+
+        /* Sections & Display */
+        .section { display: none; background: var(--card-bg); border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); padding: 30px; margin-bottom: 30px; }
+        .section.active { display: block; }
+
+        .sub-nav { display: flex; justify-content: start; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .sub-btn { background: none; border: none; color: var(--text-light); padding: 8px 15px; cursor: pointer; font-size: 16px; font-weight: 500; transition: color 0.3s; }
+        .sub-btn:hover, .sub-btn.active { color: var(--secondary); border-bottom: 2px solid var(--secondary); }
+        .sub-section { display: none; }
+        .sub-section.active { display: block; }
+
+        /* Premium Dashboard Cards */
+        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .card { background: linear-gradient(to right, #ece9e6, #ffffff); padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { font-size: 16px; color: var(--text-light); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .card .value { font-size: 28px; font-weight: bold; color: var(--primary); }
+
+        /* Tables & Typography */
+        h2 { color: var(--primary); margin-bottom: 20px; font-size: 24px; font-weight: 600; }
+        h3 { color: var(--secondary); margin-bottom: 15px; font-size: 18px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        th, td { border: 1px solid #e1e8ed; padding: 12px; text-align: left; font-size: 14px; }
+        th { background-color: #f8f9fa; color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
+        tr:nth-child(even) { background-color: #f9fbfd; }
+
+        /* Editable cells style */
+        td[contenteditable="true"] { background-color: #eef5fc; cursor: text; transition: background 0.3s; }
+        td[contenteditable="true"]:focus { background-color: #ffffff; outline: 2px solid var(--secondary); box-shadow: inset 0 0 5px rgba(0,0,0,0.1); }
+
+        /* Select Dropdown for Status */
+        .status-select { padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 13px; border: 1px solid #ccc; cursor: pointer; }
+        .status-select.paid { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .status-select.unpaid { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-header">
+        <h1>Al Noor Boys Hostel &amp; Mess Management</h1>
+        <p>Premium Admin Control Panel</p>
+    </div>
+
+    <div class="container">
+        <!-- Main Navigation Bar -->
+        <div class="nav-menu">
+            <button class="nav-btn active" onclick="switchSection('dashboard', this)">Dashboard</button>
+            <button class="nav-btn" onclick="switchSection('hotel', this)">Hotel Management</button>
+            <button class="nav-btn" onclick="switchSection('hostel', this)">Hostel Management</button>
+            <button class="nav-btn" onclick="switchSection('staff', this)">Staff Management</button>
+            <button class="nav-btn" onclick="switchSection('mess', this)">Mess Management</button>
+        </div>
+
+        <!-- 1. Dashboard Section -->
+        <div id="dashboard" class="section active">
+            <h2>Financial Overview</h2>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Total Income</h3>
+                    <div class="value" id="totalIncome">Rs. 0</div>
+                </div>
+                <div class="card">
+                    <h3>Total Expense</h3>
+                    <div class="value" id="totalExpense">Rs. 0</div>
+                </div>
+                <div class="card">
+                    <h3>Total Profit</h3>
+                    <div class="value" id="totalProfit" style="color: var(--success);">Rs. 0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Hotel Management Section -->
+        <div id="hotel" class="section">
+            <h2>Hotel Management &amp; Guest Records</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Guest Name</th>
+                        <th>Entry Date</th>
+                        <th>Total Bill</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td contenteditable="true">Ali Khan</td>
+                        <td contenteditable="true">2026-09-01</td>
+                        <td contenteditable="true" class="bill" oninput="calculateFinancials()">4500</td>
+                        <td>
+                            <select class="status-select paid" onchange="updateStatusColor(this); calculateFinancials()">
+                                <option value="paid" selected>Paid</option>
+                                <option value="unpaid">Unpaid</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">Ahmed Raza</td>
+                        <td contenteditable="true">2026-09-03</td>
+                        <td contenteditable="true" class="bill" oninput="calculateFinancials()">3000</td>
+                        <td>
+                            <select class="status-select unpaid" onchange="updateStatusColor(this); calculateFinancials()">
+                                <option value="paid">Paid</option>
+                                <option value="unpaid" selected>Unpaid</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 3. Hostel Management Section -->
+        <div id="hostel" class="section">
+            <h2>Hostel Management &amp; Student Records</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Room No</th>
+                        <th>Fee Paid</th>
+                        <th>Baki Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td contenteditable="true">Bilal Ahmed</td>
+                        <td contenteditable="true">102</td>
+                        <td contenteditable="true" class="fee-paid" oninput="calculateFinancials()">10000</td>
+                        <td contenteditable="true">5000</td>
+                        <td>
+                            <select class="status-select unpaid" onchange="updateStatusColor(this); calculateFinancials()">
+                                <option value="paid">Paid</option>
+                                <option value="unpaid" selected>Unpaid</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 4. Staff Management Section -->
+        <div id="staff" class="section">
+            <h2>Staff Management &amp; Payroll (January)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Staff Name</th>
+                        <th>Role</th>
+                        <th>Monthly Salary</th>
+                        <th>Advance</th>
+                        <th>Bonus</th>
+                        <th>Total Payable</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td contenteditable="true">Allah Ditta</td>
+                        <td contenteditable="true">Cleaner</td>
+                        <td contenteditable="true" class="salary" oninput="calculateStaffPay(this)">25000</td>
+                        <td contenteditable="true" class="advance" oninput="calculateStaffPay(this)">2000</td>
+                        <td contenteditable="true" class="bonus" oninput="calculateStaffPay(this)">1000</td>
+                        <td class="total-payable">24000</td>
+                        <td>
+                            <select class="status-select paid" onchange="updateStatusColor(this); calculateFinancials()">
+                                <option value="paid" selected>Paid</option>
+                                <option value="unpaid">Unpaid</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 5. Mess Management Section -->
+        <div id="mess" class="section">
+            <h2>Mess Management</h2>
+            <div class="sub-nav">
+                <button class="sub-btn active" onclick="switchSubSection('daily-mess', this)">Daily Tracking</button>
+                <button class="sub-btn" onclick="switchSubSection('monthly-mess', this)">Monthly Overview</button>
+            </div>
+
+            <!-- Daily Mess Tracking -->
+            <div id="daily-mess" class="sub-section active">
+                <h3>Daily Meal Tracking</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member Name</th>
+                            <th>Date</th>
+                            <th>Breakfast</th>
+                            <th>Lunch</th>
+                            <th>Dinner</th>
+                            <th>Extra/4th</th>
+                            <th>Daily Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true">Usman Ali</td>
+                            <td contenteditable="true">2026-04-04</td>
+                            <td contenteditable="true" class="meal" oninput="calculateDailyTotal(this)">150</td>
+                            <td contenteditable="true" class="meal" oninput="calculateDailyTotal(this)">200</td>
+                            <td contenteditable="true" class="meal" oninput="calculateDailyTotal(this)">200</td>
+                            <td contenteditable="true" class="meal" oninput="calculateDailyTotal(this)">100</td>
+                            <td class="daily-total">650</td>
+                            <td>
+                                <select class="status-select paid" onchange="updateStatusColor(this)">
+                                    <option value="paid" selected>Paid</option>
+                                    <option value="unpaid">Unpaid</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Monthly Mess Overview -->
+            <div id="monthly-mess" class="sub-section">
+                <h3>Monthly Mess Overview</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member Name</th>
+                            <th>Total Meals</th>
+                            <th>Total Billed</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true">Usman Ali</td>
+                            <td contenteditable="true">90</td>
+                            <td contenteditable="true">13500</td>
+                            <td>
+                                <select class="status-select unpaid" onchange="updateStatusColor(this)">
+                                    <option value="paid">Paid</option>
+                                    <option value="unpaid" selected>Unpaid</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchSection(sectionId, btnElement) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        function switchSubSection(subSectionId, btnElement) {
+            const subSections = document.querySelectorAll('.sub-section');
+            subSections.forEach(sub => sub.classList.remove('active'));
+
+            const subButtons = document.querySelectorAll('.sub-btn');
+            subButtons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(subSectionId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        // Change select background based on status
+        function updateStatusColor(selectElement) {
+            if (selectElement.value === 'paid') {
+                selectElement.className = 'status-select paid';
+            } else {
+                selectElement.className = 'status-select unpaid';
+            }
+        }
+
+        // Calculations for Daily Mess
+        function calculateDailyTotal(element) {
+            const row = element.closest('tr');
+            const meals = row.querySelectorAll('.meal');
+            let total = 0;
+            meals.forEach(meal => {
+                total += parseFloat(meal.innerText) || 0;
+            });
+            row.querySelector('.daily-total').innerText = total;
+        }
+
+        // Calculations for Staff Payroll
+        function calculateStaffPay(element) {
+            const row = element.closest('tr');
+            const salary = parseFloat(row.querySelector('.salary').innerText) || 0;
+            const advance = parseFloat(row.querySelector('.advance').innerText) || 0;
+            const bonus = parseFloat(row.querySelector('.bonus').innerText) || 0;
+            const total = salary - advance + bonus;
+            row.querySelector('.total-payable').innerText = total;
+            calculateFinancials();
+        }
+
+        // General Financials calculation for Dashboard
+        function calculateFinancials() {
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            // Income from Hotel (Only if paid)
+            const hotelRows = document.querySelectorAll('#hotel tbody tr');
+            hotelRows.forEach(row => {
+                const bill = parseFloat(row.querySelector('.bill').innerText) || 0;
+                const status = row.querySelector('.status-select').value;
+                if (status === 'paid') {
+                    totalIncome += bill;
+                }
+            });
+
+            // Income from Hostel
+            const hostelFees = document.querySelectorAll('#hostel .fee-paid');
+            hostelFees.forEach(fee => {
+                totalIncome += parseFloat(fee.innerText) || 0;
+            });
+
+            // Expense from Staff (Only if paid)
+            const staffRows = document.querySelectorAll('#staff tbody tr');
+            staffRows.forEach(row => {
+                const payable = parseFloat(row.querySelector('.total-payable').innerText) || 0;
+                const status = row.querySelector('.status-select').value;
+                if (status === 'paid') {
+                    totalExpense += payable;
+                }
+            });
+
+            // Update Dashboard
+            document.getElementById('totalIncome').innerText = 'Rs. ' + totalIncome.toLocaleString();
+            document.getElementById('totalExpense').innerText = 'Rs. ' + totalExpense.toLocaleString();
+            document.getElementById('totalProfit').innerText = 'Rs. ' + (totalIncome - totalExpense).toLocaleString();
+        }
+
+        // Initial Calculations on load
+        window.onload = function() {
+            calculateFinancials();
+        }
+    </script>
+</body>
+</html>
