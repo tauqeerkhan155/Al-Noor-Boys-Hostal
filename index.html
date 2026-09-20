@@ -69,6 +69,9 @@
             height: 100vh;
             position: fixed;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .brand { font-size: 14px; font-weight: bold; color: var(--text-main); margin-bottom: 5px; }
         .brand-sub { font-size: 10px; color: var(--text-muted); margin-bottom: 25px; }
@@ -89,6 +92,19 @@
         .menu-list li:hover, .menu-list li.active {
             background: rgba(59, 130, 246, 0.15);
             color: var(--accent-blue);
+        }
+
+        .btn-logout-sidebar {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
         }
 
         /* Main Wrapper */
@@ -190,17 +206,20 @@
     <!-- App Container -->
     <div id="appContainer">
         <!-- Sidebar -->
-        <aside>
-            <div class="brand">🌙 Al Noor Boys Hostel</div>
-            <div class="brand-sub">VIP Management System</div>
-            <ul class="menu-list">
-                <li class="active" onclick="switchSection('dashboard', this)"><span>📊 Dashboard</span><span>›</span></li>
-                <li onclick="switchSection('students', this)"><span>👥 Students Management</span><span>›</span></li>
-                <li onclick="switchSection('rooms', this)"><span>🛏️ Rooms & Seats</span><span>›</span></li>
-                <li onclick="switchSection('staff', this)"><span>👨‍💼 Staff Payroll</span><span>›</span></li>
-                <li onclick="switchSection('mess', this)"><span>🍽️ Mess Management</span><span>›</span></li>
-                <li onclick="switchSection('settings', this)"><span>⚙️ Settings & Profile</span><span>›</span></li>
-            </ul>
+        aside>
+            <div>
+                <div class="brand">🌙 Al Noor Boys Hostel</div>
+                <div class="brand-sub">VIP Management System</div>
+                <ul class="menu-list">
+                    <li class="active" onclick="switchSection('dashboard', this)"><span>📊 Dashboard</span><span>›</span></li>
+                    <li onclick="switchSection('students', this)"><span>👥 Students Management</span><span>›</span></li>
+                    <li onclick="switchSection('rooms', this)"><span>🛏️ Rooms & Seats</span><span>›</span></li>
+                    <li onclick="switchSection('staff', this)"><span>👨‍💼 Staff Payroll</span><span>›</span></li>
+                    <li onclick="switchSection('mess', this)"><span>🍽️ Mess Management</span><span>›</span></li>
+                    <li onclick="switchSection('settings', this)"><span>⚙️ Settings & Profile</span><span>›</span></li>
+                </ul>
+            </div>
+            <button class="btn-logout-sidebar" onclick="logoutSystem()">🔒 Logout</button>
         </aside>
 
         <!-- Main Wrapper -->
@@ -436,7 +455,7 @@
 
                     <div style="margin-top: 25px; border-top: 1px solid var(--border-clr); padding-top: 15px;">
                         <h4 style="font-size: 13px; margin-bottom: 5px; color: var(--accent-blue);">ℹ️ About Management System</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">Al Noor Boys Hostel & Mess Management VIP Control Panel v9.0. Secure multi-department administration suite.</p>
+                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">Al Noor Boys Hostel & Mess Management VIP Control Panel v11.0. Secure multi-department administration suite.</p>
                         
                         <h4 style="font-size: 13px; margin-top: 15px; margin-bottom: 5px; color: var(--accent-green);">📞 Contact Support</h4>
                         <p style="font-size: 12px; color: var(--text-muted);">For technical assistance or system inquiries, reach out to the chief administrator 24/7.</p>
@@ -471,9 +490,8 @@
             document.getElementById('setNameInput').value = name;
             document.getElementById('avatarText').innerText = name.substring(0,2).toUpperCase();
             
-            if(localStorage.getItem('adminUser')) {
-                document.getElementById('setUname').value = localStorage.getItem('adminUser');
-            }
+            let savedU = localStorage.getItem('adminUser') || 'admin';
+            document.getElementById('setUname').value = savedU;
 
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             document.getElementById('currentDateBadge').innerText = '📅 ' + new Date().toLocaleDateString('en-US', options);
@@ -482,8 +500,9 @@
         }
 
         function tryLogin() {
-            let u = document.getElementById('lUser').value;
-            let p = document.getElementById('lPass').value;
+            let u = document.getElementById('lUser').value.trim();
+            let p = document.getElementById('lPass').value.trim();
+            
             let savedU = localStorage.getItem('adminUser') || 'admin';
             let savedP = localStorage.getItem('adminPass') || 'admin123';
 
@@ -492,8 +511,13 @@
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'flex';
             } else {
-                alert('Invalid Credentials! (Default: admin / admin123)');
+                alert('गलत यूजरनेम या पासवर्ड! (डिफ़ॉल्ट: admin / admin123)');
             }
+        }
+
+        function logoutSystem() {
+            sessionStorage.removeItem('auth');
+            location.reload();
         }
 
         function switchSection(secId, el) {
@@ -683,21 +707,22 @@
         }
 
         function saveAdminSettings() {
-            let name = document.getElementById('setNameInput').value;
-            let uname = document.getElementById('setUname').value;
-            let pass = document.getElementById('setPass').value;
+            let name = document.getElementById('setNameInput').value.trim();
+            let uname = document.getElementById('setUname').value.trim();
+            let pass = document.getElementById('setPass').value.trim();
             let lock = document.getElementById('setLock').value;
 
-            localStorage.setItem('adminName', name);
-            localStorage.setItem('adminUser', uname);
+            if(name) localStorage.setItem('adminName', name);
+            if(uname) localStorage.setItem('adminUser', uname);
             if(pass && pass.trim() !== "") {
                 localStorage.setItem('adminPass', pass);
             }
             localStorage.setItem('lockMode', lock);
 
-            document.getElementById('profileName').innerText = name;
-            document.getElementById('avatarText').innerText = name.substring(0,2).toUpperCase();
-            alert('Settings and Profile saved successfully! Please log in again if you changed password.');
+            document.getElementById('profileName').innerText = name || 'Jawad';
+            document.getElementById('avatarText').innerText = (name || 'Jawad').substring(0,2).toUpperCase();
+            
+            alert('सेटिंग्स सफलतापूर्वक सेव हो गई हैं! अब आप नए पासवर्ड से लॉग इन कर सकते हैं।');
         }
 
         document.addEventListener('input', () => {
