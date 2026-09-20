@@ -521,15 +521,15 @@
             defaultStudents.forEach(s => {
                 let row = sTbody.insertRow();
                 row.innerHTML = `
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{s.name}</td>
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{s.room}</td>
-                    <td class="s-fee" contenteditable="true" oninput="saveDataToStorage()">&#36;{s.fee}</td>
-                    <td class="s-paid" contenteditable="true" oninput="saveDataToStorage()">&#36;{s.paid}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${s.name}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${s.room}</td>
+                    <td class="s-fee" contenteditable="true" oninput="saveDataToStorage()">${s.fee}</td>
+                    <td class="s-paid" contenteditable="true" oninput="saveDataToStorage()">${s.paid}</td>
                     <td class="s-rem">0</td>
                     <td>
-                        <select class="status-badge &#36;{s.status === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
-                            <option value="paid" &#36;{s.status==='paid'?'selected':''}>Paid</option>
-                            <option value="unpaid" &#36;{s.status==='unpaid'?'selected':''}>Unpaid</option>
+                        <select class="status-badge ${s.status === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
+                            <option value="paid" ${s.status==='paid'?'selected':''}>Paid</option>
+                            <option value="unpaid" ${s.status==='unpaid'?'selected':''}>Unpaid</option>
                         </select>
                     </td>
                     <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
@@ -546,10 +546,10 @@
             defaultRooms.forEach(r => {
                 let row = rTbody.insertRow();
                 row.innerHTML = `
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{r.room}</td>
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{r.total}</td>
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{r.occupied}</td>
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{r.available}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${r.room}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${r.total}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${r.occupied}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${r.available}</td>
                     <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
                 `;
             });
@@ -564,16 +564,16 @@
             defaultStaff.forEach(st => {
                 let row = stTbody.insertRow();
                 row.innerHTML = `
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{st.name}</td>
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{st.role}</td>
-                    <td class="st-sal" contenteditable="true" oninput="saveDataToStorage()">&#36;{st.sal}</td>
-                    <td class="st-adv" contenteditable="true" oninput="saveDataToStorage()">&#36;{st.adv}</td>
-                    <td class="st-bonus" contenteditable="true" oninput="saveDataToStorage()">&#36;{st.bonus}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${st.name}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${st.role}</td>
+                    <td class="st-sal" contenteditable="true" oninput="saveDataToStorage()">${st.sal}</td>
+                    <td class="st-adv" contenteditable="true" oninput="saveDataToStorage()">${st.adv}</td>
+                    <td class="st-bonus" contenteditable="true" oninput="saveDataToStorage()">${st.bonus}</td>
                     <td class="st-total">0</td>
                     <td>
-                        <select class="status-badge &#36;{st.status === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
-                            <option value="paid" &#36;{st.status==='paid'?'selected':''}>Paid</option>
-                            <option value="unpaid" &#36;{st.status==='unpaid'?'selected':''}>Unpaid</option>
+                        <select class="status-badge ${st.status === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
+                            <option value="paid" ${st.status==='paid'?'selected':''}>Paid</option>
+                            <option value="unpaid" ${st.status==='unpaid'?'selected':''}>Unpaid</option>
                         </select>
                     </td>
                     <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
@@ -588,13 +588,13 @@
                 let mStatus = savedMessStatus[mName] || "paid";
                 let row = mMTable.insertRow();
                 row.innerHTML = `
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{mName}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${mName}</td>
                     <td><span class="member-link" onclick="openMemberHistory(this.parentNode.parentNode.cells[0].innerText)">View 30-Day History</span></td>
                     <td class="m-total-bill" style="font-weight: bold; color: var(--accent-orange);">0</td>
                     <td>
-                        <select class="status-badge &#36;{mStatus === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
-                            <option value="paid" &#36;{mStatus==='paid'?'selected':''}>Paid</option>
-                            <option value="unpaid" &#36;{mStatus==='unpaid'?'selected':''}>Unpaid</option>
+                        <select class="status-badge ${mStatus === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
+                            <option value="paid" ${mStatus==='paid'?'selected':''}>Paid</option>
+                            <option value="unpaid" ${mStatus==='unpaid'?'selected':''}>Unpaid</option>
                         </select>
                     </td>
                     <td><button class="btn-delete" onclick="deleteMessMember(this)">Delete</button></td>
@@ -747,12 +747,12 @@
                 grandSum += dayTotal;
 
                 row.innerHTML = `
-                    <td contenteditable="true" onblur="updateDayLog(&#36;{index}, 'day', this)">&#36;{log.day}</td>
-                    <td contenteditable="true" oninput="updateDayLogLive(&#36;{index}, 'bf', this)">&#36;{log.bf}</td>
-                    <td contenteditable="true" oninput="updateDayLogLive(&#36;{index}, 'lunch', this)">&#36;{log.lunch}</td>
-                    <td contenteditable="true" oninput="updateDayLogLive(&#36;{index}, 'din', this)">&#36;{log.din}</td>
-                    <td contenteditable="true" oninput="updateDayLogLive(&#36;{index}, 'extra', this)">&#36;{log.extra}</td>
-                    <td class="day-total" style="font-weight: bold; color: var(--accent-orange);">&#36;{dayTotal}</td>
+                    <td contenteditable="true" onblur="updateDayLog(${index}, 'day', this)">${log.day}</td>
+                    <td contenteditable="true" oninput="updateDayLogLive(${index}, 'bf', this)">${log.bf}</td>
+                    <td contenteditable="true" oninput="updateDayLogLive(${index}, 'lunch', this)">${log.lunch}</td>
+                    <td contenteditable="true" oninput="updateDayLogLive(${index}, 'din', this)">${log.din}</td>
+                    <td contenteditable="true" oninput="updateDayLogLive(${index}, 'extra', this)">${log.extra}</td>
+                    <td class="day-total" style="font-weight: bold; color: var(--accent-orange);">${dayTotal}</td>
                 `;
             });
 
@@ -806,8 +806,8 @@
                 let table = document.getElementById('messMembersTable').getElementsByTagName('tbody')[0];
                 let newRow = table.insertRow();
                 newRow.innerHTML = `
-                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{name}</td>
-                    <td><span class="member-link" onclick="openMemberHistory('&#36;{name}')">View 30-Day History</span></td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">${name}</td>
+                    <td><span class="member-link" onclick="openMemberHistory('${name}')">View 30-Day History</span></td>
                     <td class="m-total-bill" style="font-weight: bold; color: var(--accent-orange);">90</td>
                     <td>
                         <select class="status-badge bg-paid" onchange="updateStatusStyle(this); saveDataToStorage();">
