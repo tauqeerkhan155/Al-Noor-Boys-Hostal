@@ -200,6 +200,8 @@
         .bg-unpaid { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
 
         .btn-action { background: var(--accent-blue); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; }
+        .btn-delete { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .btn-delete:hover { background: var(--accent-red); color: white; }
         .member-link { color: var(--accent-blue); cursor: pointer; text-decoration: underline; font-weight: bold; }
     </style>
 </head>
@@ -306,25 +308,14 @@
                                 <th>Paid Amount</th>
                                 <th>Remaining Dues</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td contenteditable="true">Ali Khan</td>
-                                <td contenteditable="true">101</td>
-                                <td class="s-fee" contenteditable="true" oninput="calculateAll()">12000</td>
-                                <td class="s-paid" contenteditable="true" oninput="calculateAll()">10000</td>
-                                <td class="s-rem">0</td>
-                                <td>
-                                    <select class="status-badge bg-unpaid" onchange="updateStatusStyle(this); calculateAll();">
-                                        <option value="paid">Paid</option>
-                                        <option value="unpaid" selected>Unpaid</option>
-                                    </select>
-                                </td>
-                            </tr>
+                            <!-- Dynamic rows loaded from localStorage -->
                         </tbody>
                     </table>
-                    <button class="btn-action" onclick="addRow('studentTable')">+ Add Student</button>
+                    <button class="btn-action" onclick="addStudentRow()">+ Add Student</button>
                 </div>
             </div>
 
@@ -332,25 +323,21 @@
             <div id="rooms" class="panel">
                 <div class="card-box">
                     <h3>Rooms & Seat Status Configuration</h3>
-                    <table>
+                    <table id="roomsTable">
                         <thead>
                             <tr>
                                 <th>Room No</th>
                                 <th>Total Seats</th>
                                 <th>Occupied Seats</th>
                                 <th>Available Empty Seats</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td contenteditable="true">101</td>
-                                <td contenteditable="true">3</td>
-                                <td contenteditable="true">2</td>
-                                <td contenteditable="true">1</td>
-                            </tr>
+                            <!-- Dynamic rows loaded from localStorage -->
                         </tbody>
                     </table>
-                    <button class="btn-action" onclick="addRow('rooms')">+ Add Room</button>
+                    <button class="btn-action" onclick="addRoomRow()">+ Add Room</button>
                 </div>
             </div>
 
@@ -368,26 +355,14 @@
                                 <th>Bonus</th>
                                 <th style="color: var(--accent-blue);">Total Payable</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td contenteditable="true">Gul Sher</td>
-                                <td contenteditable="true">Cook</td>
-                                <td class="st-sal" contenteditable="true" oninput="calculateAll()">25000</td>
-                                <td class="st-adv" contenteditable="true" oninput="calculateAll()">2000</td>
-                                <td class="st-bonus" contenteditable="true" oninput="calculateAll()">1000</td>
-                                <td class="st-total">0</td>
-                                <td>
-                                    <select class="status-badge bg-paid" onchange="updateStatusStyle(this); calculateAll();">
-                                        <option value="paid" selected>Paid</option>
-                                        <option value="unpaid">Unpaid</option>
-                                    </select>
-                                </td>
-                            </tr>
+                            <!-- Dynamic rows loaded from localStorage -->
                         </tbody>
                     </table>
-                    <button class="btn-action" onclick="addRow('staffTable')">+ Add Staff Member</button>
+                    <button class="btn-action" onclick="addStaffRow()">+ Add Staff Member</button>
                 </div>
             </div>
 
@@ -402,20 +377,11 @@
                                 <th>Action / View Daily Logs</th>
                                 <th>Total Monthly Bill (Auto)</th>
                                 <th>Status</th>
+                                <th>Remove</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td contenteditable="true" onblur="calculateAll()">Ali Khan</td>
-                                <td><span class="member-link" onclick="openMemberHistory('Ali Khan')">View 30-Day History</span></td>
-                                <td class="m-total-bill" style="font-weight: bold; color: var(--accent-orange);">0</td>
-                                <td>
-                                    <select class="status-badge bg-paid" onchange="updateStatusStyle(this); calculateAll();">
-                                        <option value="paid" selected>Paid</option>
-                                        <option value="unpaid">Unpaid</option>
-                                    </select>
-                                </td>
-                            </tr>
+                            <!-- Dynamic rows loaded from localStorage -->
                         </tbody>
                     </table>
                     <button class="btn-action" onclick="addMessMember()">+ Add New Member</button>
@@ -510,7 +476,7 @@
     </div>
 
     <script>
-        let messMemberLogs = {
+        let messMemberLogs = JSON.parse(localStorage.getItem('alNoor_messLogs')) || {
             "Ali Khan": [
                 { day: "Day 1", bf: 30, lunch: 30, din: 30, extra: 50 },
                 { day: "Day 2", bf: 30, lunch: 30, din: 30, extra: 20 },
@@ -539,6 +505,152 @@
 
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             document.getElementById('currentDateBadge').innerText = '📅 ' + new Date().toLocaleDateString('en-US', options);
+
+            loadInitialData();
+            calculateAll();
+        }
+
+        function loadInitialData() {
+            // Load Students
+            let savedStudents = JSON.parse(localStorage.getItem('alNoor_students'));
+            let sTbody = document.querySelector('#studentTable tbody');
+            sTbody.innerHTML = '';
+            let defaultStudents = savedStudents || [
+                { name: "Ali Khan", room: "101", fee: 12000, paid: 10000, status: "unpaid" }
+            ];
+            defaultStudents.forEach(s => {
+                let row = sTbody.insertRow();
+                row.innerHTML = `
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{s.name}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{s.room}</td>
+                    <td class="s-fee" contenteditable="true" oninput="saveDataToStorage()">&#36;{s.fee}</td>
+                    <td class="s-paid" contenteditable="true" oninput="saveDataToStorage()">&#36;{s.paid}</td>
+                    <td class="s-rem">0</td>
+                    <td>
+                        <select class="status-badge &#36;{s.status === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
+                            <option value="paid" &#36;{s.status==='paid'?'selected':''}>Paid</option>
+                            <option value="unpaid" &#36;{s.status==='unpaid'?'selected':''}>Unpaid</option>
+                        </select>
+                    </td>
+                    <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
+                `;
+            });
+
+            // Load Rooms
+            let savedRooms = JSON.parse(localStorage.getItem('alNoor_rooms'));
+            let rTbody = document.querySelector('#roomsTable tbody');
+            rTbody.innerHTML = '';
+            let defaultRooms = savedRooms || [
+                { room: "101", total: 3, occupied: 2, available: 1 }
+            ];
+            defaultRooms.forEach(r => {
+                let row = rTbody.insertRow();
+                row.innerHTML = `
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{r.room}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{r.total}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{r.occupied}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{r.available}</td>
+                    <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
+                `;
+            });
+
+            // Load Staff
+            let savedStaff = JSON.parse(localStorage.getItem('alNoor_staff'));
+            let stTbody = document.querySelector('#staffTable tbody');
+            stTbody.innerHTML = '';
+            let defaultStaff = savedStaff || [
+                { name: "Gul Sher", role: "Cook", sal: 25000, adv: 2000, bonus: 1000, status: "paid" }
+            ];
+            defaultStaff.forEach(st => {
+                let row = stTbody.insertRow();
+                row.innerHTML = `
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{st.name}</td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{st.role}</td>
+                    <td class="st-sal" contenteditable="true" oninput="saveDataToStorage()">&#36;{st.sal}</td>
+                    <td class="st-adv" contenteditable="true" oninput="saveDataToStorage()">&#36;{st.adv}</td>
+                    <td class="st-bonus" contenteditable="true" oninput="saveDataToStorage()">&#36;{st.bonus}</td>
+                    <td class="st-total">0</td>
+                    <td>
+                        <select class="status-badge &#36;{st.status === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
+                            <option value="paid" &#36;{st.status==='paid'?'selected':''}>Paid</option>
+                            <option value="unpaid" &#36;{st.status==='unpaid'?'selected':''}>Unpaid</option>
+                        </select>
+                    </td>
+                    <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
+                `;
+            });
+
+            // Load Mess Members
+            let mMTable = document.querySelector('#messMembersTable tbody');
+            mMTable.innerHTML = '';
+            let savedMessStatus = JSON.parse(localStorage.getItem('alNoor_messStatus')) || { "Ali Khan": "paid" };
+            Object.keys(messMemberLogs).forEach(mName => {
+                let mStatus = savedMessStatus[mName] || "paid";
+                let row = mMTable.insertRow();
+                row.innerHTML = `
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{mName}</td>
+                    <td><span class="member-link" onclick="openMemberHistory(this.parentNode.parentNode.cells[0].innerText)">View 30-Day History</span></td>
+                    <td class="m-total-bill" style="font-weight: bold; color: var(--accent-orange);">0</td>
+                    <td>
+                        <select class="status-badge &#36;{mStatus === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); saveDataToStorage();">
+                            <option value="paid" &#36;{mStatus==='paid'?'selected':''}>Paid</option>
+                            <option value="unpaid" &#36;{mStatus==='unpaid'?'selected':''}>Unpaid</option>
+                        </select>
+                    </td>
+                    <td><button class="btn-delete" onclick="deleteMessMember(this)">Delete</button></td>
+                `;
+            });
+        }
+
+        function saveDataToStorage() {
+            // Save Students
+            let students = [];
+            document.querySelectorAll('#studentTable tbody tr').forEach(row => {
+                students.push({
+                    name: row.cells[0].innerText.trim(),
+                    room: row.cells[1].innerText.trim(),
+                    fee: row.querySelector('.s-fee').innerText.trim(),
+                    paid: row.querySelector('.s-paid').innerText.trim(),
+                    status: row.querySelector('.status-badge').value
+                });
+            });
+            localStorage.setItem('alNoor_students', JSON.stringify(students));
+
+            // Save Rooms
+            let rooms = [];
+            document.querySelectorAll('#roomsTable tbody tr').forEach(row => {
+                rooms.push({
+                    room: row.cells[0].innerText.trim(),
+                    total: row.cells[1].innerText.trim(),
+                    occupied: row.cells[2].innerText.trim(),
+                    available: row.cells[3].innerText.trim()
+                });
+            });
+            localStorage.setItem('alNoor_rooms', JSON.stringify(rooms));
+
+            // Save Staff
+            let staff = [];
+            document.querySelectorAll('#staffTable tbody tr').forEach(row => {
+                staff.push({
+                    name: row.cells[0].innerText.trim(),
+                    role: row.cells[1].innerText.trim(),
+                    sal: row.querySelector('.st-sal').innerText.trim(),
+                    adv: row.querySelector('.st-adv').innerText.trim(),
+                    bonus: row.querySelector('.st-bonus').innerText.trim(),
+                    status: row.querySelector('.status-badge').value
+                });
+            });
+            localStorage.setItem('alNoor_staff', JSON.stringify(staff));
+
+            // Save Mess Status
+            let messStatus = {};
+            document.querySelectorAll('#messMembersTable tbody tr').forEach(row => {
+                let mName = row.cells[0].innerText.trim();
+                let mStat = row.querySelector('.status-badge').value;
+                messStatus[mName] = mStat;
+            });
+            localStorage.setItem('alNoor_messStatus', JSON.stringify(messStatus));
+            localStorage.setItem('alNoor_messLogs', JSON.stringify(messMemberLogs));
 
             calculateAll();
         }
@@ -569,7 +681,7 @@
                 document.getElementById('appContainer').style.display = 'flex';
                 document.getElementById('lPass').value = '';
             } else {
-                alert('Ghalat username ya password! Agar details ghalat hain toh ye login nahi hoga.');
+                alert('Ghalat username ya password!');
             }
         }
 
@@ -617,7 +729,7 @@
         function backToMessList() {
             document.getElementById('messDetailDirective').style.display = 'none';
             document.getElementById('messListDirective').style.display = 'block';
-            calculateAll();
+            saveDataToStorage();
         }
 
         function renderMemberDays() {
@@ -635,12 +747,12 @@
                 grandSum += dayTotal;
 
                 row.innerHTML = `
-                    <td contenteditable="true" onblur="updateDayLog(${index}, 'day', this)">${log.day}</td>
-                    <td contenteditable="true" oninput="updateDayLogLive(${index}, 'bf', this)">${log.bf}</td>
-                    <td contenteditable="true" oninput="updateDayLogLive(${index}, 'lunch', this)">${log.lunch}</td>
-                    <td contenteditable="true" oninput="updateDayLogLive(${index}, 'din', this)">${log.din}</td>
-                    <td contenteditable="true" oninput="updateDayLogLive(${index}, 'extra', this)">${log.extra}</td>
-                    <td class="day-total" style="font-weight: bold; color: var(--accent-orange);">${dayTotal}</td>
+                    <td contenteditable="true" onblur="updateDayLog(&#36;{index}, 'day', this)">&#36;{log.day}</td>
+                    <td contenteditable="true" oninput="updateDayLogLive(&#36;{index}, 'bf', this)">&#36;{log.bf}</td>
+                    <td contenteditable="true" oninput="updateDayLogLive(&#36;{index}, 'lunch', this)">&#36;{log.lunch}</td>
+                    <td contenteditable="true" oninput="updateDayLogLive(&#36;{index}, 'din', this)">&#36;{log.din}</td>
+                    <td contenteditable="true" oninput="updateDayLogLive(&#36;{index}, 'extra', this)">&#36;{log.extra}</td>
+                    <td class="day-total" style="font-weight: bold; color: var(--accent-orange);">&#36;{dayTotal}</td>
                 `;
             });
 
@@ -664,7 +776,7 @@
                 grandSum += (parseFloat(l.bf)||0) + (parseFloat(l.lunch)||0) + (parseFloat(l.din)||0) + (parseFloat(l.extra)||0);
             });
             document.getElementById('detailGrandTotal').innerText = 'Rs. ' + grandSum.toLocaleString();
-            calculateAll();
+            saveDataToStorage();
         }
 
         function updateDayLog(index, field, el) {
@@ -672,7 +784,7 @@
             if(field !== 'day') val = parseFloat(val) || 0;
             messMemberLogs[currentActiveMember][index][field] = val;
             renderMemberDays();
-            calculateAll();
+            saveDataToStorage();
         }
 
         function addMessDay() {
@@ -680,7 +792,7 @@
             let nextDayNum = messMemberLogs[currentActiveMember].length + 1;
             messMemberLogs[currentActiveMember].push({ day: "Day " + nextDayNum, bf: 30, lunch: 30, din: 30, extra: 0 });
             renderMemberDays();
-            calculateAll();
+            saveDataToStorage();
         }
 
         function addMessMember() {
@@ -694,17 +806,35 @@
                 let table = document.getElementById('messMembersTable').getElementsByTagName('tbody')[0];
                 let newRow = table.insertRow();
                 newRow.innerHTML = `
-                    <td contenteditable="true" onblur="calculateAll()">${name}</td>
-                    <td><span class="member-link" onclick="openMemberHistory('${name}')">View 30-Day History</span></td>
+                    <td contenteditable="true" oninput="saveDataToStorage()">&#36;{name}</td>
+                    <td><span class="member-link" onclick="openMemberHistory('&#36;{name}')">View 30-Day History</span></td>
                     <td class="m-total-bill" style="font-weight: bold; color: var(--accent-orange);">90</td>
                     <td>
-                        <select class="status-badge bg-paid" onchange="updateStatusStyle(this); calculateAll();">
+                        <select class="status-badge bg-paid" onchange="updateStatusStyle(this); saveDataToStorage();">
                             <option value="paid" selected>Paid</option>
                             <option value="unpaid">Unpaid</option>
                         </select>
                     </td>
+                    <td><button class="btn-delete" onclick="deleteMessMember(this)">Delete</button></td>
                 `;
-                calculateAll();
+                saveDataToStorage();
+            }
+        }
+
+        function deleteMessMember(btn) {
+            let row = btn.parentNode.parentNode;
+            let mName = row.cells[0].innerText.trim();
+            if(confirm("Kya aap waqai is member ko delete karna chahte hain?")) {
+                delete messMemberLogs[mName];
+                row.remove();
+                saveDataToStorage();
+            }
+        }
+
+        function deleteRow(btn) {
+            if(confirm("Kya aap waqai is record ko delete karna chahte hain?")) {
+                btn.parentNode.parentNode.remove();
+                saveDataToStorage();
             }
         }
 
@@ -732,7 +862,8 @@
                 logs.forEach(l => {
                     memberGrandTotal += (parseFloat(l.bf)||0) + (parseFloat(l.lunch)||0) + (parseFloat(l.din)||0) + (parseFloat(l.extra)||0);
                 });
-                row.querySelector('.m-total-bill').innerText = memberGrandTotal;
+                let billCell = row.querySelector('.m-total-bill');
+                if(billCell) billCell.innerText = memberGrandTotal;
 
                 let status = row.querySelector('.status-badge').value;
                 if(status === 'paid') {
@@ -759,17 +890,58 @@
             document.getElementById('dashNetProfit').innerText = 'Rs. ' + (totalIncome - totalExpense).toLocaleString();
         }
 
-        function addRow(tableId) {
-            let table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+        function addStudentRow() {
+            let table = document.querySelector('#studentTable tbody');
             let newRow = table.insertRow();
-            if(tableId === 'studentTable') {
-                newRow.innerHTML = `<td contenteditable="true">New Student</td><td contenteditable="true">103</td><td class="s-fee" contenteditable="true" oninput="calculateAll()">12000</td><td class="s-paid" contenteditable="true" oninput="calculateAll()">0</td><td class="s-rem">12000</td><td><select class="status-badge bg-unpaid" onchange="updateStatusStyle(this); calculateAll();"><option value="paid">Paid</option><option value="unpaid" selected>Unpaid</option></select></td>`;
-            } else if(tableId === 'staffTable') {
-                newRow.innerHTML = `<td contenteditable="true">New Staff</td><td contenteditable="true">Helper</td><td class="st-sal" contenteditable="true" oninput="calculateAll()">15000</td><td class="st-adv" contenteditable="true" oninput="calculateAll()">0</td><td class="st-bonus" contenteditable="true" oninput="calculateAll()">0</td><td class="st-total">15000</td><td><select class="status-badge bg-paid" onchange="updateStatusStyle(this); calculateAll();"><option value="paid" selected>Paid</option><option value="unpaid">Unpaid</option></select></td>`;
-            } else if(tableId === 'rooms') {
-                newRow.innerHTML = `<td contenteditable="true">103</td><td contenteditable="true">3</td><td contenteditable="true">1</td><td contenteditable="true">2</td>`;
-            }
-            calculateAll();
+            newRow.innerHTML = `
+                <td contenteditable="true" oninput="saveDataToStorage()">New Student</td>
+                <td contenteditable="true" oninput="saveDataToStorage()">103</td>
+                <td class="s-fee" contenteditable="true" oninput="saveDataToStorage()">12000</td>
+                <td class="s-paid" contenteditable="true" oninput="saveDataToStorage()">0</td>
+                <td class="s-rem">12000</td>
+                <td>
+                    <select class="status-badge bg-unpaid" onchange="updateStatusStyle(this); saveDataToStorage();">
+                        <option value="paid">Paid</option>
+                        <option value="unpaid" selected>Unpaid</option>
+                    </select>
+                </td>
+                <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            saveDataToStorage();
+        }
+
+        function addRoomRow() {
+            let table = document.querySelector('#roomsTable tbody');
+            let newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td contenteditable="true" oninput="saveDataToStorage()">103</td>
+                <td contenteditable="true" oninput="saveDataToStorage()">3</td>
+                <td contenteditable="true" oninput="saveDataToStorage()">1</td>
+                <td contenteditable="true" oninput="saveDataToStorage()">2</td>
+                <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            saveDataToStorage();
+        }
+
+        function addStaffRow() {
+            let table = document.querySelector('#staffTable tbody');
+            let newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td contenteditable="true" oninput="saveDataToStorage()">New Staff</td>
+                <td contenteditable="true" oninput="saveDataToStorage()">Helper</td>
+                <td class="st-sal" contenteditable="true" oninput="saveDataToStorage()">15000</td>
+                <td class="st-adv" contenteditable="true" oninput="saveDataToStorage()">0</td>
+                <td class="st-bonus" contenteditable="true" oninput="saveDataToStorage()">0</td>
+                <td class="st-total">15000</td>
+                <td>
+                    <select class="status-badge bg-paid" onchange="updateStatusStyle(this); saveDataToStorage();">
+                        <option value="paid" selected>Paid</option>
+                        <option value="unpaid">Unpaid</option>
+                    </select>
+                </td>
+                <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            saveDataToStorage();
         }
 
         function saveAdminSettings() {
@@ -787,24 +959,21 @@
 
             document.getElementById('profileName').innerText = name || 'Jawad';
             document.getElementById('avatarText').innerText = (name || 'Jawad').substring(0,2).toUpperCase();
-            
             document.getElementById('lUser').value = uname || 'admin';
 
             alert('Settings successfully save ho gayi hain!');
         }
 
         document.addEventListener('input', () => {
-            calculateAll();
+            saveDataToStorage();
         });
     </script>
 
-    <!-- Firebase Initialization Script Added -->
+    <!-- Firebase Initialization Script -->
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-        // Your web app's Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyDwvY-Oubc6tkgnVXg1smI1grhaGeOZ-5E",
           authDomain: "al-noor-boys-hostal.firebaseapp.com",
@@ -815,7 +984,6 @@
           measurementId: "G-6PJTNSSWS5"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
     </script>
