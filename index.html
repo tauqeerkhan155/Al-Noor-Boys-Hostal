@@ -244,7 +244,7 @@
         <div class="main-wrapper">
             <header>
                 <div class="search-bar">
-                    <input type="text" placeholder="Search records...">
+                    <input type="text" id="searchInput" placeholder="Search records across all tables..." onkeyup="filterTable()">
                 </div>
                 <!-- Profile & Dropdown Trigger -->
                 <div class="user-container">
@@ -321,7 +321,7 @@
 
             <!-- 3. ROOMS -->
             <div id="rooms" class="panel">
-                <div class="card-box">
+                <div id="roomListDirective" class="card-box">
                     <h3>Rooms & Seat Status Configuration</h3>
                     <table id="roomsTable">
                         <thead>
@@ -330,6 +330,7 @@
                                 <th>Total Seats</th>
                                 <th>Occupied Seats</th>
                                 <th>Available Empty Seats</th>
+                                <th>View Seats</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -338,6 +339,23 @@
                         </tbody>
                     </table>
                     <button class="btn-action" onclick="addRoomRow()">+ Add Room</button>
+                </div>
+
+                <div id="roomDetailDirective" class="card-box" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 id="detailRoomTitle">Room Details</h3>
+                        <button class="btn-action" onclick="backToRoomList()" style="background: var(--border-clr);">← Back to Rooms List</button>
+                    </div>
+                    <table id="seatsTable">
+                        <thead>
+                            <tr>
+                                <th>Seat No</th>
+                                <th>Occupant Name</th>
+                                <th>Payment Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="seatsTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -485,6 +503,19 @@
         };
         let currentActiveMember = "";
 
+        let roomSeatsData = JSON.parse(localStorage.getItem('alNoor_roomSeats')) || {
+            "101": [
+                { seatNo: "Seat 1", occupant: "Ali Khan", status: "paid" },
+                { seatNo: "Seat 2", occupant: "Tariq", status: "unpaid" },
+                { seatNo: "Seat 3", occupant: "Empty", status: "unpaid" }
+            ],
+            "103": [
+                { seatNo: "Seat 1", occupant: "New Student", status: "unpaid" },
+                { seatNo: "Seat 2", occupant: "New Student", status: "unpaid" },
+                { seatNo: "Seat 3", occupant: "Tauqeer", status: "paid" }
+            ]
+        };
+
         window.onload = function() {
             let lock = localStorage.getItem('lockMode') || 'on';
             document.getElementById('setLock').value = lock;
@@ -511,12 +542,15 @@
         }
 
         function loadInitialData() {
-            // Load Students
             let savedStudents = JSON.parse(localStorage.getItem('alNoor_students'));
             let sTbody = document.querySelector('#studentTable tbody');
             sTbody.innerHTML = '';
             let defaultStudents = savedStudents || [
-                { name: "Ali Khan", room: "101", fee: 12000, paid: 10000, status: "unpaid" }
+                { name: "Ali Khan", room: "101", fee: 12000, paid: 10000, status: "unpaid" },
+                { name: "Tariq", room: "101", fee: 12000, paid: 12000, status: "paid" },
+                { name: "New Student", room: "103", fee: 12000, paid: 0, status: "unpaid" },
+                { name: "New Student", room: "103", fee: 12000, paid: 0, status: "unpaid" },
+                { name: "Tauqeer", room: "103", fee: 12000, paid: 12000, status: "paid" }
             ];
             defaultStudents.forEach(s => {
                 let row = sTbody.insertRow();
@@ -536,12 +570,12 @@
                 `;
             });
 
-            // Load Rooms
             let savedRooms = JSON.parse(localStorage.getItem('alNoor_rooms'));
             let rTbody = document.querySelector('#roomsTable tbody');
             rTbody.innerHTML = '';
             let defaultRooms = savedRooms || [
-                { room: "101", total: 3, occupied: 2, available: 1 }
+                { room: "101", total: 3, occupied: 2 },
+                { room: "103", total: 3, occupied: 3 }
             ];
             defaultRooms.forEach(r => {
                 let row = rTbody.insertRow();
@@ -549,12 +583,12 @@
                     <td contenteditable="true" oninput="saveDataToStorage()">${r.room}</td>
                     <td contenteditable="true" oninput="saveDataToStorage()">${r.total}</td>
                     <td contenteditable="true" oninput="saveDataToStorage()">${r.occupied}</td>
-                    <td contenteditable="true" oninput="saveDataToStorage()">${r.available}</td>
+                    <td>${r.total - r.occupied}</td>
+                    <td><span class="member-link" onclick="openRoomSeats('${r.room}')">View Seats</span></td>
                     <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
                 `;
             });
 
-            // Load Staff
             let savedStaff = JSON.parse(localStorage.getItem('alNoor_staff'));
             let stTbody = document.querySelector('#staffTable tbody');
             stTbody.innerHTML = '';
@@ -580,7 +614,6 @@
                 `;
             });
 
-            // Load Mess Members
             let mMTable = document.querySelector('#messMembersTable tbody');
             mMTable.innerHTML = '';
             let savedMessStatus = JSON.parse(localStorage.getItem('alNoor_messStatus')) || { "Ali Khan": "paid" };
@@ -603,7 +636,6 @@
         }
 
         function saveDataToStorage() {
-            // Save Students
             let students = [];
             document.querySelectorAll('#studentTable tbody tr').forEach(row => {
                 students.push({
@@ -616,19 +648,17 @@
             });
             localStorage.setItem('alNoor_students', JSON.stringify(students));
 
-            // Save Rooms
             let rooms = [];
             document.querySelectorAll('#roomsTable tbody tr').forEach(row => {
                 rooms.push({
                     room: row.cells[0].innerText.trim(),
                     total: row.cells[1].innerText.trim(),
                     occupied: row.cells[2].innerText.trim(),
-                    available: row.cells[3].innerText.trim()
                 });
             });
             localStorage.setItem('alNoor_rooms', JSON.stringify(rooms));
+            localStorage.setItem('alNoor_roomSeats', JSON.stringify(roomSeatsData));
 
-            // Save Staff
             let staff = [];
             document.querySelectorAll('#staffTable tbody tr').forEach(row => {
                 staff.push({
@@ -642,7 +672,6 @@
             });
             localStorage.setItem('alNoor_staff', JSON.stringify(staff));
 
-            // Save Mess Status
             let messStatus = {};
             document.querySelectorAll('#messMembersTable tbody tr').forEach(row => {
                 let mName = row.cells[0].innerText.trim();
@@ -653,6 +682,33 @@
             localStorage.setItem('alNoor_messLogs', JSON.stringify(messMemberLogs));
 
             calculateAll();
+        }
+
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            
+            const tables = document.querySelectorAll('table');
+            tables.forEach(table => {
+                const tbody = table.querySelector('tbody');
+                if(!tbody) return;
+                const rows = tbody.querySelectorAll('tr');
+                
+                rows.forEach(row => {
+                    let match = false;
+                    for (let i = 0; i < row.cells.length; i++) {
+                        const cell = row.cells[i];
+                        if (cell) {
+                            const textValue = cell.textContent || cell.innerText;
+                            if (textValue.toUpperCase().indexOf(filter) > -1) {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+                    row.style.display = match ? "" : "none";
+                });
+            });
         }
 
         function toggleProfileDropdown(event) {
@@ -711,6 +767,9 @@
             if(secId === 'mess') {
                 backToMessList();
             }
+            if(secId === 'rooms') {
+                backToRoomList();
+            }
         }
 
         function updateStatusStyle(sel) {
@@ -729,6 +788,55 @@
         function backToMessList() {
             document.getElementById('messDetailDirective').style.display = 'none';
             document.getElementById('messListDirective').style.display = 'block';
+            saveDataToStorage();
+        }
+
+        function openRoomSeats(roomNo) {
+            document.getElementById('detailRoomTitle').innerText = "Room No: " + roomNo + " - Seat Details";
+            document.getElementById('roomListDirective').style.display = 'none';
+            document.getElementById('roomDetailDirective').style.display = 'block';
+
+            let tbody = document.getElementById('seatsTableBody');
+            tbody.innerHTML = '';
+
+            if(!roomSeatsData[roomNo]) {
+                roomSeatsData[roomNo] = [
+                    { seatNo: "Seat 1", occupant: "Empty", status: "unpaid" },
+                    { seatNo: "Seat 2", occupant: "Empty", status: "unpaid" },
+                    { seatNo: "Seat 3", occupant: "Empty", status: "unpaid" }
+                ];
+            }
+
+            let seats = roomSeatsData[roomNo];
+            seats.forEach((seat, index) => {
+                let row = tbody.insertRow();
+                row.innerHTML = `
+                    <td contenteditable="true" oninput="saveDataToStorage()">${seat.seatNo}</td>
+                    <td contenteditable="true" oninput="saveDataToLog('${roomNo}', ${index}, 'occupant', this)">${seat.occupant}</td>
+                    <td>
+                        <select class="status-badge ${seat.status === 'paid' ? 'bg-paid' : 'bg-unpaid'}" onchange="updateStatusStyle(this); updateSeatStatus('${roomNo}', ${index}, this.value)">
+                            <option value="paid" ${seat.status==='paid'?'selected':''}>Paid</option>
+                            <option value="unpaid" ${seat.status==='unpaid'?'selected':''}>Unpaid</option>
+                        </select>
+                    </td>
+                `;
+            });
+        }
+
+        function backToRoomList() {
+            document.getElementById('roomDetailDirective').style.display = 'none';
+            document.getElementById('roomListDirective').style.display = 'block';
+            saveDataToStorage();
+        }
+
+        function updateSeatStatus(roomNo, index, val) {
+            roomSeatsData[roomNo][index].status = val;
+            saveDataToStorage();
+        }
+
+        function saveDataToLog(roomNo, index, field, el) {
+            let val = el.innerText;
+            roomSeatsData[roomNo][index][field] = val;
             saveDataToStorage();
         }
 
@@ -917,7 +1025,8 @@
                 <td contenteditable="true" oninput="saveDataToStorage()">103</td>
                 <td contenteditable="true" oninput="saveDataToStorage()">3</td>
                 <td contenteditable="true" oninput="saveDataToStorage()">1</td>
-                <td contenteditable="true" oninput="saveDataToStorage()">2</td>
+                <td>2</td>
+                <td><span class="member-link" onclick="openRoomSeats('103')">View Seats</span></td>
                 <td><button class="btn-delete" onclick="deleteRow(this)">Delete</button></td>
             `;
             saveDataToStorage();
@@ -963,29 +1072,6 @@
 
             alert('Settings successfully save ho gayi hain!');
         }
-
-        document.addEventListener('input', () => {
-            saveDataToStorage();
-        });
-    </script>
-
-    <!-- Firebase Initialization Script -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyDwvY-Oubc6tkgnVXg1smI1grhaGeOZ-5E",
-          authDomain: "al-noor-boys-hostal.firebaseapp.com",
-          projectId: "al-noor-boys-hostal",
-          storageBucket: "al-noor-boys-hostal.firebasestorage.app",
-          messagingSenderId: "658000149080",
-          appId: "1:658000149080:web:a7093982bd7207e9eea82d",
-          measurementId: "G-6PJTNSSWS5"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
     </script>
 </body>
 </html>
